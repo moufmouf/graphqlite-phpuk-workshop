@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Entity;
+namespace App\Services;
+
+use App\Entity\Product;
 
 interface VatServiceInterface
 {

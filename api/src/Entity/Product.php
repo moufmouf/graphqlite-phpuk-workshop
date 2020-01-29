@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use App\Services\VatServiceInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use TheCodingMachine\GraphQLite\Annotations\Autowire;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 
@@ -152,5 +154,14 @@ class Product
         }
 
         return $this;
+    }
+
+    /**
+     * @Field()
+     * @Autowire(for="$vatService")
+     */
+    public function getVat(VatServiceInterface $vatService): float
+    {
+        return $vatService->getVat($this);
     }
 }
