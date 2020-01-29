@@ -91,3 +91,9 @@ VatService
 getVat
 
 !!! VatServiceInterface
+
+
+
+///////// Prefetching objects
+
+Edit ProductRepository and Company.php

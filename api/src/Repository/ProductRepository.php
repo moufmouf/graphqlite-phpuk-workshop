@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Company;
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use function iterator_to_array;
 
 /**
  * @method Product|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +19,22 @@ class ProductRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Product::class);
+    }
+
+    /**
+     * @param Company[] $companies
+     */
+    public function findByCompanies(array $companies)
+    {
+        $ids = array_map(function(Company $company) { return $company->getId(); }, $companies);
+
+        return $this->createQueryBuilder('p')
+            ->join(Company::class, 'c')
+            ->andWhere('c.id IN (:values)')
+            ->setParameter('values', $ids)
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     // /**

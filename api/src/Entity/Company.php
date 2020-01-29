@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use App\Repository\ProductRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use TheCodingMachine\GraphQLite\Annotations\Autowire;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 
@@ -88,12 +90,29 @@ class Company
     }
 
     /**
-     * @Field()
-     * @return Collection|Product[]
+     * @Field(prefetchMethod="prefetchProducts")
+     * @return Product[]
      */
-    public function getProducts(): Collection
+    public function getProducts($sortedProducts)
     {
-        return $this->products;
+        return $sortedProducts[$this->getId()] ?? [];
+    }
+
+    /**
+     * @param Company[] $companies
+     * @Autowire(for="$productRepository")
+     * @return array<int, array<Product>>
+     */
+    public function prefetchProducts(iterable $companies, ProductRepository $productRepository)
+    {
+        $products = $productRepository->findByCompanies($companies);
+
+        $sortedProducts = [];
+        foreach ($products as $product) {
+            $sortedProducts[$product->getCompany()->getId()][] = $product;
+        }
+
+        return $sortedProducts;
     }
 
     public function addProduct(Product $product): self
