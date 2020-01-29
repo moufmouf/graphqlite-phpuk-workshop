@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+
+  traefik:
+    image: traefik:1.7
+    command: --docker --docker.exposedbydefault=false
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # The container that contains Symfony and GraphQLite
+  api:
+    image: thecodingmachine/php:7.4-v3-apache
+    labels:
+      - traefik.enable=true
+      - traefik.backend=back
+      - traefik.frontend.rule=Host:api.localhost
+    environment:
+      APACHE_DOCUMENT_ROOT: public
+      PHP_EXTENSION_XDEBUG: 1
+      DATABASE_URL: mysql://root:secret@mysql:3306/demo?serverVersion=5.7
+      STARTUP_COMMAND_1: composer install
+      #STARTUP_COMMAND_2: bin/console doctrine:migration:migrate --no-interaction
+    volumes:
+      - ./api:/var/www/html
+
+  mysql:
+    image: thecodingmachine/mysql:5.7-v1
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: demo
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:4.7
+    labels:
+      - traefik.enable=true
+      - traefik.backend=phpmyadmin
+      - traefik.frontend.rule=Host:phpmyadmin.localhost
+    environment:
+      PMA_HOST: mysql
+
+
+volumes:
+
+  mysql_data:
+    driver: local
