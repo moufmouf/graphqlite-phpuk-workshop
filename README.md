@@ -49,8 +49,12 @@ $ bin/console make:entity
 ```
 
 
+## Installing GraphQLite
 
 
+```bash
+$ composer require thecodingmachine/graphqlite-bundle
+```
 
 
 

@@ -3540,16 +3540,16 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v1.6.1",
+            "version": "v1.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "c497c0c77cb9018cccd9c092832ebf9826612f92"
+                "reference": "e4f5a2653ca503782a31486198bd1dd1c9a47f83"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/c497c0c77cb9018cccd9c092832ebf9826612f92",
-                "reference": "c497c0c77cb9018cccd9c092832ebf9826612f92",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/e4f5a2653ca503782a31486198bd1dd1c9a47f83",
+                "reference": "e4f5a2653ca503782a31486198bd1dd1c9a47f83",
                 "shasum": ""
             },
             "require": {
@@ -3585,7 +3585,7 @@
                 }
             ],
             "description": "Composer plugin for Symfony",
-            "time": "2020-01-27T15:38:49+00:00"
+            "time": "2020-01-30T12:06:45+00:00"
         },
         {
             "name": "symfony/form",
@@ -6806,16 +6806,16 @@
         },
         {
             "name": "thecodingmachine/graphqlite-bundle",
-            "version": "v4.0.3",
+            "version": "v4.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thecodingmachine/graphqlite-bundle.git",
-                "reference": "df74e3218e1ddd3d7aeefceba5e9abc5d4e8ff80"
+                "reference": "b664bf327a5442b4abb2d9761312390be403a37a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thecodingmachine/graphqlite-bundle/zipball/df74e3218e1ddd3d7aeefceba5e9abc5d4e8ff80",
-                "reference": "df74e3218e1ddd3d7aeefceba5e9abc5d4e8ff80",
+                "url": "https://api.github.com/repos/thecodingmachine/graphqlite-bundle/zipball/b664bf327a5442b4abb2d9761312390be403a37a",
+                "reference": "b664bf327a5442b4abb2d9761312390be403a37a",
                 "shasum": ""
             },
             "require": {
@@ -6873,7 +6873,7 @@
                 "graphql",
                 "symfony"
             ],
-            "time": "2020-01-24T09:29:44+00:00"
+            "time": "2020-01-30T09:25:52+00:00"
         },
         {
             "name": "thecodingmachine/graphqlite-symfony-validator-bridge",
