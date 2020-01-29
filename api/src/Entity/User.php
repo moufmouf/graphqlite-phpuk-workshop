@@ -3,82 +3,75 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Serializable;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User
+class User implements UserInterface, Serializable
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="uuid", unique=true)
-     *
-     * @var UuidInterface
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=180, unique=true)
      */
-    private $login;
+    private $email;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $password;
-
-    /**
-     * @ORM\Column(type="simple_array")
+     * @ORM\Column(type="json")
      */
     private $roles = [];
 
     /**
-     * @ORM\Column(type="datetime_immutable")
+     * @var string The hashed password
+     * @ORM\Column(type="string")
      */
-    private $created;
-
-    /**
-     * @ORM\Column(type="datetime_immutable", nullable=true)
-     */
-    private $updated;
-
-    public function __construct()
-    {
-        $this->roles = [];
-    }
+    private $password;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getLogin(): ?string
+    public function getEmail(): ?string
     {
-        return $this->login;
+        return $this->email;
     }
 
-    public function setLogin(string $login): self
+    public function setEmail(string $email): self
     {
-        $this->login = $login;
+        $this->email = $email;
 
         return $this;
     }
 
-    public function getPassword(): ?string
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUsername(): string
     {
-        return $this->password;
+        return (string) $this->email;
     }
 
-    public function setPassword(string $password): self
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
     {
-        $this->password = $password;
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
 
-        return $this;
-    }
-
-    public function getRoles(): ?array
-    {
-        return $this->roles;
+        return array_unique($roles);
     }
 
     public function setRoles(array $roles): self
@@ -88,27 +81,71 @@ class User
         return $this;
     }
 
-    public function getCreated(): ?\DateTimeImmutable
+    /**
+     * @see UserInterface
+     */
+    public function getPassword(): string
     {
-        return $this->created;
+        return (string) $this->password;
     }
 
-    public function setCreated(\DateTimeImmutable $created): self
+    public function setPassword(string $password): self
     {
-        $this->created = $created;
+        $this->password = $password;
 
         return $this;
     }
 
-    public function getUpdated(): ?\DateTimeImmutable
+    /**
+     * @see UserInterface
+     */
+    public function getSalt()
     {
-        return $this->updated;
+        // not needed when using the "bcrypt" algorithm in security.yaml
     }
 
-    public function setUpdated(?\DateTimeImmutable $updated): self
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
     {
-        $this->updated = $updated;
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    public function getCompany(): ?Company
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?Company $company): self
+    {
+        $this->company = $company;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+            $this->userName,
+            $this->password,
+        ));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function unserialize($serialized)
+    {
+        [
+            $this->id,
+            $this->userName,
+            $this->password,
+        ]= unserialize($serialized);
     }
 }

@@ -33,6 +33,17 @@ PHPMyAdmin should be available at http://phpmyadmin.localhost
 
 ### Setup the data model
 
+We will set up the security with the user class following this tutorial:
+
+https://symfony.com/doc/current/security.html
+
+Then create fixtures:
+
+```bash
+$ composer require orm-fixtures --dev
+```
+
+
 ```bash
 $ bin/console make:entity
 ```
