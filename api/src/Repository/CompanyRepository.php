@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Company;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query;
 
 /**
  * @method Company|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,7 +21,7 @@ class CompanyRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Company[] Returns an array of Company objects
+     * @return Query|Company[] Returns an array of Company objects
      */
     public function search(?string $search)
     {
@@ -30,7 +31,6 @@ class CompanyRepository extends ServiceEntityRepository
             ->setParameter('val', '%'.$search.'%')
             ->orderBy('c.id', 'ASC')
             ->getQuery()
-            ->getResult()
         ;
     }
 

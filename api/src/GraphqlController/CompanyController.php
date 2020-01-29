@@ -6,6 +6,7 @@ namespace App\GraphqlController;
 
 use App\Entity\Company;
 use App\Repository\CompanyRepository;
+use Porpaginas\Doctrine\ORM\ORMQueryResult;
 use TheCodingMachine\GraphQLite\Annotations\Query;
 
 class CompanyController
@@ -23,10 +24,10 @@ class CompanyController
     /**
      * @Query()
      * @param string|null $search
-     * @return Company[]
+     * @return ORMQueryResult|Company[]
      */
     public function getCompanies(?string $search)
     {
-        return $this->companyRepository->search($search);
+        return new ORMQueryResult($this->companyRepository->search($search));
     }
 }
