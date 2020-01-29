@@ -57,8 +57,12 @@ $ composer require thecodingmachine/graphqlite-bundle
 ```
 
 
-
-
 Set up your development environment
 
 => PHPStorm + PHP Annotations
+
+
+
+Install Porpaginas
+
+composer require beberlei/porpaginas

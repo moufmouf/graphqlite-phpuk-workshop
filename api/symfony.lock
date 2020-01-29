@@ -1,4 +1,7 @@
 {
+    "beberlei/porpaginas": {
+        "version": "v1.2"
+    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {

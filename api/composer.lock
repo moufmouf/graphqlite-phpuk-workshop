@@ -4,8 +4,59 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "239bcc5ab13923ca38c8b27d832cb9e2",
+    "content-hash": "71f68f1dc8c3f03d4e856129e1f28d9b",
     "packages": [
+        {
+            "name": "beberlei/porpaginas",
+            "version": "v1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/beberlei/porpaginas.git",
+                "reference": "2bd874d7c5711131367fe1f646e7afc3e17aab94"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/beberlei/porpaginas/zipball/2bd874d7c5711131367fe1f646e7afc3e17aab94",
+                "reference": "2bd874d7c5711131367fe1f646e7afc3e17aab94",
+                "shasum": ""
+            },
+            "require-dev": {
+                "doctrine/orm": ">=2.2",
+                "knplabs/knp-components": "@stable",
+                "pagerfanta/pagerfanta": "@stable",
+                "phake/phake": "@stable",
+                "phpunit/phpunit": "^5.7",
+                "symfony/event-dispatcher": "@stable",
+                "twig/twig": "@stable"
+            },
+            "suggest": {
+                "pagerfanta/pagerfanta": "For rendering pagination with Pagerfanta"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Porpaginas\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Eberlei",
+                    "email": "kontakt@beberlei.de"
+                }
+            ],
+            "description": "Library that generically solves several pagination issues with DAO/repository abstractions.",
+            "keywords": [
+                "page",
+                "pagination",
+                "paginator",
+                "paging"
+            ],
+            "time": "2017-08-31T09:40:09+00:00"
+        },
         {
             "name": "doctrine/annotations",
             "version": "v1.8.0",
