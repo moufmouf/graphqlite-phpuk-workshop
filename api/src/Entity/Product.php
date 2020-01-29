@@ -5,8 +5,11 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use TheCodingMachine\GraphQLite\Annotations\Field;
+use TheCodingMachine\GraphQLite\Annotations\Type;
 
 /**
+ * @Type()
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
  */
 class Product
@@ -21,23 +24,23 @@ class Product
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private string $name;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $price;
+    private ?float $price;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $margin;
+    private ?float $margin;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $company;
+    private Company $company;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Option", mappedBy="product", orphanRemoval=true)
@@ -51,11 +54,17 @@ class Product
         $this->options = new ArrayCollection();
     }
 
+    /**
+     * @Field()
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @Field()
+     */
     public function getName(): ?string
     {
         return $this->name;
@@ -68,6 +77,9 @@ class Product
         return $this;
     }
 
+    /**
+     * @Field()
+     */
     public function getPrice(): ?float
     {
         return $this->price;
@@ -80,6 +92,9 @@ class Product
         return $this;
     }
 
+    /**
+     * @Field()
+     */
     public function getMargin(): ?float
     {
         return $this->margin;
@@ -92,6 +107,9 @@ class Product
         return $this;
     }
 
+    /**
+     * @Field()
+     */
     public function getCompany(): ?Company
     {
         return $this->company;
@@ -105,6 +123,7 @@ class Product
     }
 
     /**
+     * @Field()
      * @return Collection|Option[]
      */
     public function getOptions(): Collection

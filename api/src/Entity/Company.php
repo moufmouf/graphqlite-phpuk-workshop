@@ -5,8 +5,11 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use TheCodingMachine\GraphQLite\Annotations\Field;
+use TheCodingMachine\GraphQLite\Annotations\Type;
 
 /**
+ * @Type()
  * @ORM\Entity(repositoryClass="App\Repository\CompanyRepository")
  */
 class Company
@@ -46,11 +49,17 @@ class Company
         $this->users = new ArrayCollection();
     }
 
+    /**
+     * @Field()
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @Field()
+     */
     public function getName(): ?string
     {
         return $this->name;
@@ -63,6 +72,9 @@ class Company
         return $this;
     }
 
+    /**
+     * @Field()
+     */
     public function getWebsite(): ?string
     {
         return $this->website;
@@ -76,6 +88,7 @@ class Company
     }
 
     /**
+     * @Field()
      * @return Collection|Product[]
      */
     public function getProducts(): Collection
@@ -107,6 +120,7 @@ class Company
     }
 
     /**
+     * @Field()
      * @return Collection|User[]
      */
     public function getUsers(): Collection

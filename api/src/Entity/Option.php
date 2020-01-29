@@ -3,10 +3,13 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use TheCodingMachine\GraphQLite\Annotations\Field;
+use TheCodingMachine\GraphQLite\Annotations\Type;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\OptionRepository")
  * @ORM\Table(name="product_option")
+ * @Type()
  */
 class Option
 {
@@ -40,11 +43,17 @@ class Option
         $this->product = $product;
     }
 
+    /**
+     * @Field()
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @Field()
+     */
     public function getName(): ?string
     {
         return $this->name;
@@ -57,6 +66,9 @@ class Option
         return $this;
     }
 
+    /**
+     * @Field()
+     */
     public function getPrice(): ?float
     {
         return $this->price;
@@ -69,6 +81,9 @@ class Option
         return $this;
     }
 
+    /**
+     * @Field()
+     */
     public function getProduct(): ?Product
     {
         return $this->product;

@@ -6,8 +6,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Serializable;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use TheCodingMachine\GraphQLite\Annotations\Field;
+use TheCodingMachine\GraphQLite\Annotations\Type;
 
 /**
+ * @Type()
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 class User implements UserInterface, Serializable
@@ -53,11 +56,17 @@ class User implements UserInterface, Serializable
         $this->setPlainPassword($plainPassword, $passwordEncoder);
     }
 
+    /**
+     * @Field()
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @Field()
+     */
     public function getEmail(): ?string
     {
         return $this->email;
@@ -73,6 +82,7 @@ class User implements UserInterface, Serializable
     /**
      * A visual identifier that represents this user.
      *
+     * @Field()
      * @see UserInterface
      */
     public function getUsername(): string
@@ -91,6 +101,8 @@ class User implements UserInterface, Serializable
     }
 
     /**
+     * @Field()
+     * @return string[]
      * @see UserInterface
      */
     public function getRoles(): array
@@ -148,6 +160,9 @@ class User implements UserInterface, Serializable
         // $this->plainPassword = null;
     }
 
+    /**
+     * @Field()
+     */
     public function getCompany(): ?Company
     {
         return $this->company;
