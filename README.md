@@ -62,7 +62,32 @@ Set up your development environment
 => PHPStorm + PHP Annotations
 
 
+Demo with CompanyController
+
+Porpaginas demo (automatic pagination)
 
 Install Porpaginas
 
 composer require beberlei/porpaginas
+
+
+Modify CompanyController to add pagination
+
+Add UserController => with Pagination
+Showcase the @Right annotation.
+
+///////// FINE-TUNED SECURITY
+
+I want only the mails of the users that are in my company to be displayed!
+
+Create a Voter
+Add the Security annotation
+
+
+//////// Autowiring the VAT service
+
+VatService
+
+getVat
+
+!!! VatServiceInterface

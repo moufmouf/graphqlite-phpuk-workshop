@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Porpaginas\Doctrine\ORM\ORMQueryResult;
 use TheCodingMachine\GraphQLite\Annotations\Query;
+use TheCodingMachine\GraphQLite\Annotations\Right;
 
 class UserController
 {
@@ -24,10 +25,11 @@ class UserController
 
     /**
      * @Query()
+     * @Right("ROLE_ADMIN")
      * @return ORMQueryResult|User[]
      */
-    public function users()
+    public function users(?string $search)
     {
-        return new ORMQueryResult($this->userRepository->findAll());
+        return new ORMQueryResult($this->userRepository->search($search));
     }
 }

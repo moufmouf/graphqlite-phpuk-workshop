@@ -7,6 +7,7 @@ use Serializable;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use TheCodingMachine\GraphQLite\Annotations\Field;
+use TheCodingMachine\GraphQLite\Annotations\Security;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 
 /**
@@ -66,6 +67,7 @@ class User implements UserInterface, Serializable
 
     /**
      * @Field()
+     * @Security("is_granted('email', this)", failWith=null)
      */
     public function getEmail(): ?string
     {
