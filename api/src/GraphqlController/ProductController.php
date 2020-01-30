@@ -10,9 +10,11 @@ use App\Repository\CompanyRepository;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use TheCodingMachine\GraphQLite\Annotations\Factory;
 use TheCodingMachine\GraphQLite\Annotations\Mutation;
 use TheCodingMachine\GraphQLite\Annotations\Query;
+use TheCodingMachine\Graphqlite\Validator\ValidationFailedException;
 
 class ProductController
 {
@@ -25,12 +27,17 @@ class ProductController
      * @var ProductRepository
      */
     private ProductRepository $productRepository;
+    /**
+     * @var ValidatorInterface
+     */
+    private ValidatorInterface $validator;
 
-    public function __construct(EntityManagerInterface $em, CompanyRepository $companyRepository, ProductRepository $productRepository)
+    public function __construct(EntityManagerInterface $em, CompanyRepository $companyRepository, ProductRepository $productRepository, ValidatorInterface $validator)
     {
         $this->em = $em;
         $this->companyRepository = $companyRepository;
         $this->productRepository = $productRepository;
+        $this->validator = $validator;
     }
 
     /**
@@ -65,6 +72,12 @@ class ProductController
         foreach ($options as $option) {
             $product->addOption($option);
         }
+
+        // Let's validate the product
+        $errors = $this->validator->validate($product);
+        // Throw an appropriate GraphQL exception if validation errors are encountered
+        ValidationFailedException::throwException($errors);
+
         return $product;
     }
 

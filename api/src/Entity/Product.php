@@ -6,6 +6,7 @@ use App\Services\VatServiceInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use TheCodingMachine\GraphQLite\Annotations\Autowire;
 use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
@@ -25,11 +26,13 @@ class Product
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private string $name;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Assert\GreaterThanOrEqual(0)
      */
     private ?float $price;
 
