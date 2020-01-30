@@ -27,6 +27,15 @@ module.exports = {
 							hotReload: false // pending https://github.com/sveltejs/svelte/issues/2377
 						}
 					}
+				},
+				{
+					test: /\.(graphql|gql)$/,
+					exclude: /node_modules/,
+					//loader: 'graphql-tag/loader'
+					loader: 'gq-loader',
+					options: {
+						url: 'http://www.localhost/graphql'
+					}
 				}
 			]
 		},
@@ -59,6 +68,15 @@ module.exports = {
 							generate: 'ssr',
 							dev
 						}
+					}
+				},
+				{
+					test: /\.(graphql|gql)$/,
+					exclude: /node_modules/,
+					//loader: 'graphql-tag/loader'
+					loader: 'gq-loader',
+					options: {
+						url: 'http://www.localhost/graphql'
 					}
 				}
 			]
