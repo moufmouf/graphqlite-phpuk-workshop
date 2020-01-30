@@ -3,8 +3,12 @@ version: '3'
 services:
 
   traefik:
-    image: traefik:1.7
-    command: --docker --docker.exposedbydefault=false
+    image: traefik:2.0
+    command:
+      - --api.insecure=true
+      - --api.dashboard=true
+      - --providers.docker
+      - --providers.docker.exposedByDefault=false
     ports:
       - "80:80"
     volumes:
@@ -15,8 +19,7 @@ services:
     image: thecodingmachine/php:7.4-v3-apache
     labels:
       - traefik.enable=true
-      - traefik.backend=back
-      - traefik.frontend.rule=Host:api.localhost
+      - traefik.http.routers.api_router.rule=Host(`api.localhost`)
     environment:
       APACHE_DOCUMENT_ROOT: public
       PHP_EXTENSION_XDEBUG: 1
@@ -40,13 +43,24 @@ services:
     image: phpmyadmin/phpmyadmin:4.7
     labels:
       - traefik.enable=true
-      - traefik.backend=phpmyadmin
-      - traefik.frontend.rule=Host:phpmyadmin.localhost
+      - traefik.http.routers.phpmyadmin_router.rule=Host(`phpmyadmin.localhost`)
     environment:
       PMA_HOST: mysql
       PMA_USER: root
       PMA_PASSWORD: secret
 
+  # The container that contains Javascript / SPA
+  front:
+    image: thecodingmachine/nodejs:12
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.front_router.rule=Host(`www.localhost`)
+      - traefik.http.services.front_service.loadbalancer.server.port=3000
+    environment:
+      STARTUP_COMMAND_1: "npm install"
+      STARTUP_COMMAND_2: "npm run dev"
+    volumes:
+      - ./front:/usr/src/app:delegated
 
 volumes:
 
