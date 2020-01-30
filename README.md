@@ -1,98 +1,133 @@
-## What we did before
+# PHP UK Conference - GraphQLite workshop
 
-### Set up Docker
+This project contains the code to be downloaded by PHP UK Conference participants at the GraphQLite workshop.
 
-- write docker-compose.yml
-- for Windows / MacOS: edit your `/etc/hosts` file:
+## Project organization
 
-```
-127.0.0.1 api.localhost
-127.0.0.1 phpmyadmin.localhost
-```
+In order to install the project, start by cloning it.
 
-### Install Symfony
+This repository contains many branches all named "stepXX-some-description".
 
-Install Symfony in the `api` directory:
+Start with branch "step0":
 
 ```bash
-composer create-project symfony/website-skeleton api
-cd api
-composer require symfony/apache-pack
+$ git checkout step0
 ```
 
-At this point, you have a working environment.
+At any point in the workshop, you can fast forward by switching to the correct branch.
 
-Start the environment with `docker-compose`:
+
+## Installing
+
+The repository provides a `docker-compose.yml` to set up the environment quickly.
+
+You will need Docker to start this project:
 
 ```bash
 $ docker-compose up
 ```
 
-The application should be available at http://api.localhost
-PHPMyAdmin should be available at http://phpmyadmin.localhost
+The images might take some time to download, be patient.
 
-### Setup the data model
+When you start the containers, a number of commands will run automatically!
 
-We will set up the security with the user class following this tutorial:
+- `composer install` is executed
+- Migrations are applied
+- Data fixtures are loaded (so the data in database is reset)
 
-https://symfony.com/doc/current/security.html
+Check the `docker-compose.yaml` file for more details.
 
-Then create fixtures:
+If you are running Windows or MacOS, you will need to edit your `/etc/hosts` file (on Windows, the file is in `c:\Windows\System32\Drivers\etc\hosts` and you need to be Administrator to edit it).
 
-```bash
-$ composer require orm-fixtures --dev
+Add those lines:
+
+**/etc/hosts**
+```
+127.0.0.1 api.localhost
+127.0.0.1 phpmyadmin.localhost
 ```
 
+## The project so far
 
-```bash
-$ bin/console make:entity
-```
+We will be playing with a "marketplace".
+
+**Users** in our application belong to companies. A **company** is selling **products**. A product can have any number of **options** attached to it.
 
 
-## Installing GraphQLite
+At the beginning of the workshop, the project contains 4 entities:
 
+- `User`
+- `Company`
+- `Product`
+- `Option`
+
+There are 4 Doctrine repositories matching these entities.
+
+The Symfony security has been set up correctly (the `User` implements Symfony's `UserInterface`, the `security.yaml` file has been configured).
+
+## Step 1: Installing GraphQLite
+
+The first step for us is to add GraphQLite to the project.
+
+GraphQLite is framework agnostic but in the case of Symfony, it comes with a bundle to ease the installation:
 
 ```bash
 $ composer require thecodingmachine/graphqlite-bundle
 ```
 
+## Step 2: Writing your first query
 
-Set up your development environment
+Note: Set up your development environment
 
 => PHPStorm + PHP Annotations
 
-
 Demo with CompanyController
 
-Porpaginas demo (automatic pagination)
+## Step 3: Installing Porpaginas
 
 Install Porpaginas
 
-composer require beberlei/porpaginas
+```bash
+$ composer require beberlei/porpaginas
+```
 
+## Step 4: Enabling pagination
+
+Porpaginas demo (automatic pagination)
 
 Modify CompanyController to add pagination
 
 Add UserController => with Pagination
+
+## Step 5: Security
+
+### The @Right annotation
+
 Showcase the @Right annotation.
 
-///////// FINE-TUNED SECURITY
+### Fine-tuned security
 
 I want only the mails of the users that are in my company to be displayed!
 
-Create a Voter
-Add the Security annotation
+- Create a Voter
+- Add the Security annotation
+
+## Step 6: autowiring
+
+Sometimes, computed fields need to access data only available through services.
+
+- Create VatService
+- Use @Autowire annotation
+- Best practices!!! Use a VatServiceInterface
+
+## Step 7: Mutations
+
+- create a ProductController
+
+## Step 8: Validation
 
 
-//////// Autowiring the VAT service
-
-VatService
-
-getVat
-
-!!! VatServiceInterface
-
-
+## Step 9: Performance issues
 
 ///////// Prefetching objects
 
