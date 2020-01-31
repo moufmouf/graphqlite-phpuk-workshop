@@ -2,17 +2,17 @@ version: '3'
 
 services:
 
-  traefik:
-    image: traefik:2.0
-    command:
-      - --api.insecure=true
-      - --api.dashboard=true
-      - --providers.docker
-      - --providers.docker.exposedByDefault=false
-    ports:
-      - "80:80"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+#  traefik:
+#    image: traefik:2.0
+#    command:
+#      - --api.insecure=true
+#      - --api.dashboard=true
+#      - --providers.docker
+#      - --providers.docker.exposedByDefault=false
+#    ports:
+#      - "80:80"
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
 
   # The container that contains Symfony and GraphQLite
   api:
@@ -20,6 +20,8 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.api_router.rule=Host(`api.localhost`)
+    ports:
+      - "80:80"
     environment:
       APACHE_DOCUMENT_ROOT: public
       PHP_EXTENSION_XDEBUG: 1
@@ -52,6 +54,8 @@ services:
   # The container that contains Javascript / SPA
   front:
     image: thecodingmachine/nodejs:12
+    ports:
+      - "3000:3000"
     labels:
       - traefik.enable=true
       - traefik.http.routers.front_router.rule=Host(`www.localhost`)
