@@ -90,6 +90,15 @@ class Company
     }
 
     /**
+     * @Field()
+     * @return Product[]
+     */
+    /*public function getProducts()
+    {
+        return $this->products;
+    }*/
+
+    /**
      * @Field(prefetchMethod="prefetchProducts")
      * @return Product[]
      */

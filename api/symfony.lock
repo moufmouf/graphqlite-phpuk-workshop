@@ -135,6 +135,9 @@
     "mouf/classname-mapper": {
         "version": "v1.0.2"
     },
+    "myclabs/php-enum": {
+        "version": "1.7.2"
+    },
     "nelmio/cors-bundle": {
         "version": "1.5",
         "recipe": {

@@ -67,6 +67,7 @@ class User implements UserInterface, Serializable
 
     /**
      * @Field()
+     * //Security("this.getCompany() == user.getCompany()", failWith=null)
      * @Security("is_granted('email', this)", failWith=null)
      */
     public function getEmail(): ?string

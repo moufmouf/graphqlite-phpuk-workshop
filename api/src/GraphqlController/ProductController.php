@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use TheCodingMachine\GraphQLite\Annotations\Factory;
 use TheCodingMachine\GraphQLite\Annotations\Mutation;
 use TheCodingMachine\GraphQLite\Annotations\Query;
+use TheCodingMachine\GraphQLite\Exceptions\GraphQLException;
 use TheCodingMachine\Graphqlite\Validator\ValidationFailedException;
 
 class ProductController
@@ -42,9 +43,21 @@ class ProductController
 
     /**
      * @Mutation()
+     * @param Option[] $options
      */
-    public function createProduct(Product $product): Product
+    public function createProduct(string $name, float $price, int $companyId, array $options = []): Product
     {
+        $product = new Product($name, $this->companyRepository->find($companyId));
+        $product->setPrice($price);
+        foreach ($options as $option) {
+            $product->addOption($option);
+        }
+
+        // Let's validate the product
+        $errors = $this->validator->validate($product);
+        // Throw an appropriate GraphQL exception if validation errors are encountered
+        ValidationFailedException::throwException($errors);
+
         $this->em->persist($product);
         foreach ($product->getOptions() as $option) {
             $this->em->persist($option);
@@ -59,26 +72,6 @@ class ProductController
     public function getProduct(int $productId): ?Product
     {
         return $this->productRepository->find($productId);
-    }
-
-    /**
-     * @Factory()
-     * @param Option[] $options
-     */
-    public function productFactory(string $name, float $price, int $companyId, array $options = []): Product
-    {
-        $product = new Product($name, $this->companyRepository->find($companyId));
-        $product->setPrice($price);
-        foreach ($options as $option) {
-            $product->addOption($option);
-        }
-
-        // Let's validate the product
-        $errors = $this->validator->validate($product);
-        // Throw an appropriate GraphQL exception if validation errors are encountered
-        ValidationFailedException::throwException($errors);
-
-        return $product;
     }
 
     /**

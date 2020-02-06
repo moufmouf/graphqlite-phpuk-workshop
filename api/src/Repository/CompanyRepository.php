@@ -21,9 +21,9 @@ class CompanyRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Query|Company[] Returns an array of Company objects
+     * @return Query Returns a query selecting companies
      */
-    public function search(?string $search)
+    public function search(?string $search): Query
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.name LIKE :val')
