@@ -1315,8 +1315,7 @@ class ProductRepository extends ServiceEntityRepository
         $ids = array_map(function(Company $company) { return $company->getId(); }, $companies);
 
         return $this->createQueryBuilder('p')
-            ->join(Company::class, 'c')
-            ->andWhere('c.id IN (:values)')
+            ->andWhere('IDENTITY(p.company) IN (:values)')
             ->setParameter('values', $ids)
             ->getQuery()
             ->getResult()
@@ -1355,10 +1354,13 @@ api_1         | [2020-02-06T16:58:27.994509+00:00] doctrine.DEBUG: SELECT p0_.id
 
 Success!!! We have only 3 queries instead of 102.
 
-Let's see how long the query took: 7s (!!!)
+Let's see how long the query took: 520ms (vs 650ms previously).
 
-Here, you see something quite unsettling. While it would make perfect sense that 3 queries run faster than 102 queries, the opposite happens to be true!
+You can notice that the performance is better, but not immensely better.
 
-Doctrine performance can be a strange beast (if you happen to know why, please open a PR!)
+Please note that MySQL and PHP are on the same host, so latency is quite short.
+With a MySQL on another physical server, we could expect a more important difference.
+
+Doctrine performance can be a strange beast and MySQL is very good at answering short queries.
 
 Conclusion: always test your performance optimizations.

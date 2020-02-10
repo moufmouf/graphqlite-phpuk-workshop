@@ -28,9 +28,15 @@ class ProductRepository extends ServiceEntityRepository
     {
         $ids = array_map(function(Company $company) { return $company->getId(); }, $companies);
 
-        return $this->createQueryBuilder('p')
+        /*return $this->createQueryBuilder('p')
             ->join(Company::class, 'c')
             ->andWhere('c.id IN (:values)')
+            ->setParameter('values', $ids)
+            ->getQuery()
+            ->getResult()
+            ;*/
+        return $this->createQueryBuilder('p')
+            ->andWhere('IDENTITY(p.company) IN (:values)')
             ->setParameter('values', $ids)
             ->getQuery()
             ->getResult()
