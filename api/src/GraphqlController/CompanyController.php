@@ -30,4 +30,13 @@ class CompanyController
     {
         return new ORMQueryResult($this->companyRepository->search($search));
     }
+
+    /**
+     * @Query()
+     * @param int $id
+     */
+    public function getCompany(int $id): ?Company
+    {
+        return $this->companyRepository->find($id);
+    }
 }

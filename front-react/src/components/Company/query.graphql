@@ -1,0 +1,11 @@
+query company($id: Int!) {
+    company(id: $id) {
+        id
+        name
+        products {
+            name
+            price
+        }
+    }
+}
+

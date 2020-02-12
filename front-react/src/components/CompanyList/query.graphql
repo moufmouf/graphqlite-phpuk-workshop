@@ -1,0 +1,13 @@
+query companies($search: String!) {
+    companies(search: $search) {
+        items(limit:10, offset: 0) {
+            id
+            name
+            products {
+                name
+                price
+            }
+        }
+        count
+    }
+}
