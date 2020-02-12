@@ -3,6 +3,7 @@ query company($id: Int!) {
         id
         name
         products {
+            id
             name
             price
         }

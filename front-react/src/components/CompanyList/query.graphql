@@ -3,10 +3,7 @@ query companies($search: String!) {
         items(limit:10, offset: 0) {
             id
             name
-            products {
-                name
-                price
-            }
+            website
         }
         count
     }

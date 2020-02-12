@@ -19,12 +19,6 @@ const CompanyList: React.FC<Props> = ({ data }) => (
                     !!company && (
                         <li key={i} className={`${className}__item`}>
                             <Link to={"/company/"+company.id}>{company.name}</Link>
-                            <ul>
-                            { company.products.map(
-                                product =>
-                                    <li>{ product.name } ({ product.price }€)</li>
-                            ) }
-                            </ul>
                         </li>
                     ),
             )}

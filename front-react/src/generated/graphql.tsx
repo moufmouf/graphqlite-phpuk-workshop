@@ -150,27 +150,6 @@ export type User = SymfonyUserInterface & {
   userName: Scalars['String'],
 };
 
-export type CompaniesQueryVariables = {
-  search: Scalars['String']
-};
-
-
-export type CompaniesQuery = (
-  { __typename?: 'Query' }
-  & { companies: (
-    { __typename?: 'PorpaginasResult_Company' }
-    & Pick<PorpaginasResult_Company, 'count'>
-    & { items: Array<(
-      { __typename?: 'Company' }
-      & Pick<Company, 'id' | 'name'>
-      & { products: Array<(
-        { __typename?: 'Product' }
-        & Pick<Product, 'name' | 'price'>
-      )> }
-    )> }
-  ) }
-);
-
 export type CompanyQueryVariables = {
   id: Scalars['Int']
 };
@@ -183,76 +162,36 @@ export type CompanyQuery = (
     & Pick<Company, 'id' | 'name'>
     & { products: Array<(
       { __typename?: 'Product' }
-      & Pick<Product, 'name' | 'price'>
+      & Pick<Product, 'id' | 'name' | 'price'>
     )> }
   )> }
 );
 
-
-export const CompaniesDocument = gql`
-    query companies($search: String!) {
-  companies(search: $search) {
-    items(limit: 10, offset: 0) {
-      id
-      name
-      products {
-        name
-        price
-      }
-    }
-    count
-  }
-}
-    `;
-export type CompaniesComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<CompaniesQuery, CompaniesQueryVariables>, 'query'> & ({ variables: CompaniesQueryVariables; skip?: boolean; } | { skip: boolean; });
-
-    export const CompaniesComponent = (props: CompaniesComponentProps) => (
-      <ApolloReactComponents.Query<CompaniesQuery, CompaniesQueryVariables> query={CompaniesDocument} {...props} />
-    );
-    
-export type CompaniesProps<TChildProps = {}> = ApolloReactHoc.DataProps<CompaniesQuery, CompaniesQueryVariables> & TChildProps;
-export function withCompanies<TProps, TChildProps = {}>(operationOptions?: ApolloReactHoc.OperationOption<
-  TProps,
-  CompaniesQuery,
-  CompaniesQueryVariables,
-  CompaniesProps<TChildProps>>) {
-    return ApolloReactHoc.withQuery<TProps, CompaniesQuery, CompaniesQueryVariables, CompaniesProps<TChildProps>>(CompaniesDocument, {
-      alias: 'companies',
-      ...operationOptions
-    });
+export type CompaniesQueryVariables = {
+  search: Scalars['String']
 };
 
-/**
- * __useCompaniesQuery__
- *
- * To run a query within a React component, call `useCompaniesQuery` and pass it any options that fit your needs.
- * When your component renders, `useCompaniesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCompaniesQuery({
- *   variables: {
- *      search: // value for 'search'
- *   },
- * });
- */
-export function useCompaniesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<CompaniesQuery, CompaniesQueryVariables>) {
-        return ApolloReactHooks.useQuery<CompaniesQuery, CompaniesQueryVariables>(CompaniesDocument, baseOptions);
-      }
-export function useCompaniesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<CompaniesQuery, CompaniesQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<CompaniesQuery, CompaniesQueryVariables>(CompaniesDocument, baseOptions);
-        }
-export type CompaniesQueryHookResult = ReturnType<typeof useCompaniesQuery>;
-export type CompaniesLazyQueryHookResult = ReturnType<typeof useCompaniesLazyQuery>;
-export type CompaniesQueryResult = ApolloReactCommon.QueryResult<CompaniesQuery, CompaniesQueryVariables>;
+
+export type CompaniesQuery = (
+  { __typename?: 'Query' }
+  & { companies: (
+    { __typename?: 'PorpaginasResult_Company' }
+    & Pick<PorpaginasResult_Company, 'count'>
+    & { items: Array<(
+      { __typename?: 'Company' }
+      & Pick<Company, 'id' | 'name' | 'website'>
+    )> }
+  ) }
+);
+
+
 export const CompanyDocument = gql`
     query company($id: Int!) {
   company(id: $id) {
     id
     name
     products {
+      id
       name
       price
     }
@@ -302,3 +241,58 @@ export function useCompanyLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHook
 export type CompanyQueryHookResult = ReturnType<typeof useCompanyQuery>;
 export type CompanyLazyQueryHookResult = ReturnType<typeof useCompanyLazyQuery>;
 export type CompanyQueryResult = ApolloReactCommon.QueryResult<CompanyQuery, CompanyQueryVariables>;
+export const CompaniesDocument = gql`
+    query companies($search: String!) {
+  companies(search: $search) {
+    items(limit: 10, offset: 0) {
+      id
+      name
+      website
+    }
+    count
+  }
+}
+    `;
+export type CompaniesComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<CompaniesQuery, CompaniesQueryVariables>, 'query'> & ({ variables: CompaniesQueryVariables; skip?: boolean; } | { skip: boolean; });
+
+    export const CompaniesComponent = (props: CompaniesComponentProps) => (
+      <ApolloReactComponents.Query<CompaniesQuery, CompaniesQueryVariables> query={CompaniesDocument} {...props} />
+    );
+    
+export type CompaniesProps<TChildProps = {}> = ApolloReactHoc.DataProps<CompaniesQuery, CompaniesQueryVariables> & TChildProps;
+export function withCompanies<TProps, TChildProps = {}>(operationOptions?: ApolloReactHoc.OperationOption<
+  TProps,
+  CompaniesQuery,
+  CompaniesQueryVariables,
+  CompaniesProps<TChildProps>>) {
+    return ApolloReactHoc.withQuery<TProps, CompaniesQuery, CompaniesQueryVariables, CompaniesProps<TChildProps>>(CompaniesDocument, {
+      alias: 'companies',
+      ...operationOptions
+    });
+};
+
+/**
+ * __useCompaniesQuery__
+ *
+ * To run a query within a React component, call `useCompaniesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCompaniesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCompaniesQuery({
+ *   variables: {
+ *      search: // value for 'search'
+ *   },
+ * });
+ */
+export function useCompaniesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<CompaniesQuery, CompaniesQueryVariables>) {
+        return ApolloReactHooks.useQuery<CompaniesQuery, CompaniesQueryVariables>(CompaniesDocument, baseOptions);
+      }
+export function useCompaniesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<CompaniesQuery, CompaniesQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<CompaniesQuery, CompaniesQueryVariables>(CompaniesDocument, baseOptions);
+        }
+export type CompaniesQueryHookResult = ReturnType<typeof useCompaniesQuery>;
+export type CompaniesLazyQueryHookResult = ReturnType<typeof useCompaniesLazyQuery>;
+export type CompaniesQueryResult = ApolloReactCommon.QueryResult<CompaniesQuery, CompaniesQueryVariables>;

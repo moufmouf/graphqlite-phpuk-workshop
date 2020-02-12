@@ -18,7 +18,7 @@ const Company: React.FC<Props> = ({ data }) => (
                 (product, i) =>
                     !!product && (
                         <li key={i} className={`${className}__item`}>
-                            <strong>{product.name} ({ product.price }€)</strong>
+                            <img src={"https://i.picsum.photos/id/"+product.id+"/100/100.jpg"} /><strong>{product.name} ({ product.price }€)</strong>
                         </li>
                     ),
             )}
