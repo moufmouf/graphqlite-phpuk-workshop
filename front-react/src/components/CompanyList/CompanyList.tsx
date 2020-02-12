@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { CompaniesQuery } from '../../generated/graphql';
+import {Link} from "react-router-dom";
 //import './styles.css';
 
 interface Props {
@@ -17,7 +18,7 @@ const CompanyList: React.FC<Props> = ({ data }) => (
                 (company, i) =>
                     !!company && (
                         <li key={i} className={`${className}__item`}>
-                            <strong>{company.name}</strong>
+                            <Link to={"/company/"+company.id}>{company.name}</Link>
                             <ul>
                             { company.products.map(
                                 product =>
