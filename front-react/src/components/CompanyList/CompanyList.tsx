@@ -11,18 +11,19 @@ const className = 'CompanyList';
 
 const CompanyList: React.FC<Props> = ({ data }) => (
     <div className={className}>
-        <h3>Companies</h3>
-        <ol className={`${className}__list`}>
+        <div className={`${className}__list`}>
             {!!data.companies &&
             data.companies.items.map(
                 (company, i) =>
                     !!company && (
-                        <li key={i} className={`${className}__item`}>
-                            <Link to={"/company/"+company.id}>{company.name}</Link>
-                        </li>
+                        <div key={i} className="companyrow row">
+                            <div className="col">
+                                <Link to={"/company/"+company.id}>{company.name}</Link><br/><small>({company.website})</small>
+                            </div>
+                        </div>
                     ),
             )}
-        </ol>
+        </div>
     </div>
 );
 

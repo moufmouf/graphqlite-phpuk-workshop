@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import CompanyFilteredList from "./components/CompanyList/CompanyFilteredList";
 import {
@@ -10,12 +9,12 @@ import {
     useParams
 } from "react-router-dom";
 import CompanyContainer from "./components/Company/CompanyContainer";
-import Company from "./components/Company/Company";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
   return (
 
-    <div className="App">
+    <div className="App container">
         <Router>
             <Switch>
                 <Route exact path="/">

@@ -1,4 +1,4 @@
-.App {
+/*.App {
   text-align: center;
 }
 
@@ -35,4 +35,10 @@
   to {
     transform: rotate(360deg);
   }
+}
+*/
+
+.companyrow {
+    border: #666666 1px solid;
+    margin-bottom: 5px;
 }
