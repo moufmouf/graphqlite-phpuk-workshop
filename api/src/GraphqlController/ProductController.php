@@ -41,13 +41,50 @@ class ProductController
         $this->validator = $validator;
     }
 
+//    /**
+//     * @Mutation()
+//     */
+//    public function createProduct(string $name, float $price, int $companyId): Product
+//    {
+//        $product = new Product($name, $this->companyRepository->find($companyId));
+//        $product->setPrice($price);
+//        $this->em->persist($product);
+//        $this->em->flush();
+//        return $product;
+//    }
+
     /**
      * @Mutation()
      * @param Option[] $options
      */
-    public function createProduct(string $name, float $price, int $companyId, array $options = []): Product
+    /*public function createProduct(
+        string $name,
+        float $price,
+        int $companyId,
+        array $options): Product
     {
-        $product = new Product($name, $this->companyRepository->find($companyId));
+        if ($name === '') {
+            throw new GraphQLException('Empty product names are not allowed', 400);
+        }
+        if ($price < 0) {
+            throw new GraphQLException('The price must be positive', 400);
+        }
+        // ...
+    }*/
+
+    /**
+     * @Mutation()
+     * @param Option[] $options
+     */
+    public function createProduct(
+            string $name,
+            float $price,
+            int $companyId,
+            array $options = []): Product
+    {
+        $product = new Product($name,
+            $this->companyRepository->
+            find($companyId));
         $product->setPrice($price);
         foreach ($options as $option) {
             $product->addOption($option);

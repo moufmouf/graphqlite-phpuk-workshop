@@ -1,3 +1,9 @@
+TODO: change this project so that GraphiQL runs locally?
+=> hard!
+=> Provide a Graphql-Playground install on the USB key?
+
+
+
 # PHP UK Conference - GraphQLite workshop
 
 This project contains the code to be downloaded by PHP UK Conference participants at the GraphQLite workshop.
@@ -86,7 +92,7 @@ use TheCodingMachine\GraphQLite\Annotations\Query;
      */
     public function getCompanies(?string $search)
     {
-        return $this->companyRepository->search($search);
+        return $this->companyRepository->search($search)->getArrayResult();
     }
 ```
 
@@ -110,7 +116,9 @@ Browse to `http://api.localhost/graphiql`
 
 ... and you should see an error!
 
-// TODO: screenshot
+![](docs/images/exception1.png)
+
+> For return type of App\GraphqlController\CompanyController::getCompanies, a type-hint is missing (or PHPDoc specifies a "mixed" type-hint). Please provide a better type-hint.
 
 GraphQL is a strictly typed protocol.
 
@@ -124,7 +132,7 @@ and provide types in all annotated methods.
      */
     public function getCompanies(?string $search)
     {
-        return $this->companyRepository->search($search);
+        return $this->companyRepository->search($search)->getArrayResult();
     }
 ```
 
@@ -135,7 +143,9 @@ So... browse again to `http://api.localhost/graphiql`
 
 ... and you should see another error!
  
-// TODO: screenshot
+![](docs/images/exception2.png)
+
+> For return type of App\GraphqlController\CompanyController::getCompanies, cannot map class "App\Entity\Company" to a known GraphQL type. Check your TypeMapper configuration.
 
 We told GraphQLite to expose the `Company` class, but we did not allow the `Company` class to be exposed as a GraphQL
 type. We need to explicitly allow the class to be exposed, and every field in the class.
@@ -236,6 +246,10 @@ Browse again to `http://api.localhost/graphiql`
 
 ... another error!
 
+![](docs/images/exception3.png)
+
+> For return type of App\Entity\Company::getProducts, cannot map class "App\Entity\Product" to a known GraphQL type. Check your TypeMapper configuration.
+
 Of course, GraphQLite does not know how to map the `Product` class.
 
 **Exercise**:
@@ -270,8 +284,6 @@ In GraphiQL IDE, you can have many operations in the same page. When you press t
 operation that will be executed.
 
 
-
-TODO: continue here!!!!
 TODO: give the branch to switch to.
 
 
@@ -469,7 +481,7 @@ You will see this error:
 
 > Cannot query field "company" on type "SymfonyUserInterface". Did you mean to use an inline fragment on "User"?
 
-TODO: schema
+![](docs/images/user_class_diagram.png)
 
 The explanation is simple. The `me` query provided returns a Symfony's `UserInterface`.
 
@@ -745,7 +757,23 @@ class Product
 
 Test this field in GraphiQL:
 
-TODO
+```graphql
+query companies {
+  companies(search: "") {
+    items(limit:100, offset: 0) {
+      id
+      name
+      products {
+        name
+        price
+        vat
+      }
+    }
+  }
+}
+```
+
+You should see that the new VAT field is correctly computed.
 
 Computed fields can be easily added, but sometimes, computation needs some extra logic and you put your code in a service.
 
@@ -800,7 +828,21 @@ Thanks to the `@Autowire` annotation, GraphQLite will inject the `VatService` se
 
 Run the query again:
 
-TODO => write a getProduct query
+```graphql
+query companies {
+  companies(search: "") {
+    items(limit:100, offset: 0) {
+      id
+      name
+      products {
+        name
+        price
+        vat
+      }
+    }
+  }
+}
+```
 
 The VatService will be provided by GraphQLite.
 
@@ -1242,7 +1284,7 @@ The first thing we can notice is that it is relatively fast! The query runs in ~
 MySQL is indeed quite optimized and all the requests are performed on indexed columns.
 
 If we were writing pure SQL, we would probably use a join to write the query. Even then, the SQL query would not be trivial because
-we want only 10 companies and for each companies the complete list of products attached (the LIMIT must be applied on companies, not on the global result set).
+we want only 100 companies and for each companies the complete list of products attached (the LIMIT must be applied on companies, not on the global result set).
 
 There are a number of solutions to limit the number of requests performed.
 

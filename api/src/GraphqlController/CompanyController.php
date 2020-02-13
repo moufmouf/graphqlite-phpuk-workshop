@@ -23,6 +23,14 @@ class CompanyController
 
     /**
      * @Query()
+     * @return Company[]
+     */
+    /*public function getCompanies(?string $search)
+    {
+        return $this->companyRepository->search($search)->getResult();
+    }*/
+    /**
+     * @Query()
      * @param string|null $search
      * @return ORMQueryResult|Company[]
      */
