@@ -1406,3 +1406,8 @@ With a MySQL on another physical server, we could expect a more important differ
 Doctrine performance can be a strange beast and MySQL is very good at answering short queries.
 
 Conclusion: always test your performance optimizations.
+
+
+## Front-end
+
+https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/

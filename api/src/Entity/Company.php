@@ -93,19 +93,19 @@ class Company
      * @Field()
      * @return Product[]
      */
-    /*public function getProducts()
+    public function getProducts()
     {
         return $this->products;
-    }*/
+    }
 
     /**
      * @Field(prefetchMethod="prefetchProducts")
      * @return Product[]
      */
-    public function getProducts($sortedProducts)
+    /*public function getProducts($sortedProducts)
     {
         return $sortedProducts[$this->getId()] ?? [];
-    }
+    }*/
 
     /**
      * @param Company[] $companies

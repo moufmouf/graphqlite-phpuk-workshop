@@ -17,15 +17,18 @@ services:
   # The container that contains Symfony and GraphQLite
   api:
     image: thecodingmachine/php:7.4-v3-apache
+    ports:
+      - "81:80"
     labels:
       - traefik.enable=true
       - traefik.http.routers.api_router.rule=Host(`api.localhost`)
-    ports:
-      - "80:80"
     environment:
       APACHE_DOCUMENT_ROOT: public
       PHP_EXTENSION_XDEBUG: 1
       PHP_EXTENSION_INTL: 1
+#      PHP_INI_XDEBUG__PROFILER_ENABLE: 1
+#      PHP_INI_XDEBUG__PROFILER_OUTPUT_DIR: /var/www/html/profiling
+#      PHP_INI_XDEBUG__PROFILER_OUTPUT_NAME: cachegrind.out.%s.%u
       DATABASE_URL: mysql://root:secret@mysql:3306/demo?serverVersion=5.7
       STARTUP_COMMAND_1: composer install
       STARTUP_COMMAND_2: bin/console doctrine:migration:migrate --no-interaction || true
@@ -45,6 +48,8 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:4.7
+    ports:
+      - "82:80"
     labels:
       - traefik.enable=true
       - traefik.http.routers.phpmyadmin_router.rule=Host(`phpmyadmin.localhost`)
@@ -53,11 +58,11 @@ services:
       PMA_USER: root
       PMA_PASSWORD: secret
 
-  # The container that contains Javascript / SPA
+  # The container that contains Javascript / SPA (SvelteJS)
   front:
     image: thecodingmachine/nodejs:12
     ports:
-      - "3000:3000"
+      - "83:3000"
     labels:
       - traefik.enable=true
       - traefik.http.routers.front_router.rule=Host(`www.localhost`)
@@ -67,6 +72,21 @@ services:
       STARTUP_COMMAND_2: "npm run dev"
     volumes:
       - ./front:/usr/src/app:delegated
+
+  # The container that contains Javascript / SPA (SvelteJS)
+  front-react:
+    image: thecodingmachine/nodejs:12
+    ports:
+      - "84:3000"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.react_router.rule=Host(`react.localhost`)
+      - traefik.http.services.react_service.loadbalancer.server.port=3000
+    environment:
+      STARTUP_COMMAND_1: "yarn install"
+      STARTUP_COMMAND_2: "yarn run start"
+    volumes:
+      - ./front-react:/usr/src/app:delegated
 
 volumes:
 
