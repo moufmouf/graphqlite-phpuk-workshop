@@ -592,7 +592,10 @@ class VatService implements VatServiceInterface
 </ul>
 <p>Symfony&#39;s autowiring should detect that <code>VatService</code> is the only available implementation of <code>VatServiceInterface</code><br>so when GraphQLite will ask for the service implementing <code>VatServiceInterface</code>, Symfony will automatically serve<br>the <code>VatService</code> instance.</p>
 <p>Success!</p>
-<h2 id="step-5-mutations">Step 5: Mutations</h2>
+<h2 id="step-5-playing-with-the-front-end-part">Step 5: Playing with the front-end part</h2>
+<p>TODO</p>
+<p><a href="https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/">https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/</a></p>
+<h2 id="step-6-mutations">Step 6: Mutations</h2>
 <p>So far, we used &quot;Queries&quot; to fetch data from the database. Let&#39;s now try to create new records and insert them.</p>
 <p>To do this, we need to use &quot;mutations&quot;.</p>
 <p>Mutations are GraphQL operations that can change the state of the application.<br>The difference between queries and mutations is mostly a semantic one. Nothing prevents you from altering your database<br>on a &quot;query&quot;, but you should definitely not do it (just like you would not save a record on a GET HTTP request in a REST<br>API).</p>
@@ -730,7 +733,7 @@ class VatService implements VatServiceInterface
   }
 }
 </code></pre>
-<h2 id="step-8-validation">Step 8: Validation</h2>
+<h2 id="step-7-validation">Step 7: Validation</h2>
 <p>Congratulations! Now, you know how to query and update your database using GraphQL.</p>
 <p>The GraphQL type system validates automatically the structure of the data passed by our client.<br>However, the client could still pass garbage data. For instance, he could pass an empty name, or a negative product price:</p>
 <pre><code class="lang-graphql">mutation createProduct {
@@ -871,7 +874,7 @@ class Product
 }
 </code></pre>
 <p>Success! We now have 2 error messages, one for each field in error.<br>Furthermore, we pushed validation rules on the domain layer, which is also a good thing!</p>
-<h2 id="step-9-performance-issues">Step 9: Performance issues</h2>
+<h2 id="step-8-performance-issues">Step 8: Performance issues</h2>
 <p>A well known performance issue in GraphQL is called the &quot;N+1&quot; issue.</p>
 <p>Try running this query in GraphiQL:</p>
 <pre><code class="lang-graphql">query companies {
@@ -984,5 +987,3 @@ api_1         | [2020-02-06T16:58:27.994509+00:00] doctrine.DEBUG: SELECT p0_.id
 <p>Please note that MySQL and PHP are on the same host, so latency is quite short.<br>With a MySQL on another physical server, we could expect a more important difference.</p>
 <p>Doctrine performance can be a strange beast and MySQL is very good at answering short queries.</p>
 <p>Conclusion: always test your performance optimizations.</p>
-<h2 id="front-end">Front-end</h2>
-<p><a href="https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/">https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/</a></p>

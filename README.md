@@ -858,7 +858,14 @@ the `VatService` instance.
 
 Success!
 
-## Step 5: Mutations
+## Step 5: Playing with the front-end part
+
+TODO
+
+https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/
+
+
+## Step 6: Mutations
 
 So far, we used "Queries" to fetch data from the database. Let's now try to create new records and insert them.
 
@@ -1044,7 +1051,7 @@ query product {
 }
 ```
 
-## Step 8: Validation
+## Step 7: Validation
 
 Congratulations! Now, you know how to query and update your database using GraphQL.
 
@@ -1227,7 +1234,7 @@ Let's run our mutation again in GraphQLite. Now, you should see the 2 errors ret
 Success! We now have 2 error messages, one for each field in error.
 Furthermore, we pushed validation rules on the domain layer, which is also a good thing!
 
-## Step 9: Performance issues
+## Step 8: Performance issues
 
 A well known performance issue in GraphQL is called the "N+1" issue.
 
@@ -1396,8 +1403,3 @@ With a MySQL on another physical server, we could expect a more important differ
 Doctrine performance can be a strange beast and MySQL is very good at answering short queries.
 
 Conclusion: always test your performance optimizations.
-
-
-## Front-end
-
-https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/
