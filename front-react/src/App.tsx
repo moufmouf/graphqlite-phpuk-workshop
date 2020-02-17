@@ -5,7 +5,6 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link,
     useParams
 } from "react-router-dom";
 import CompanyContainer from "./components/Company/CompanyContainer";
@@ -37,7 +36,7 @@ function CompanyRoute() {
     let { id } = useParams();
 
     if (id === undefined) {
-        return <div>Boum</div>;
+        return <div>Boom</div>;
     }
 
     return (

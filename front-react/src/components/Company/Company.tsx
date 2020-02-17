@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {CompaniesQuery, CompanyQuery} from '../../generated/graphql';
+import {CompanyQuery} from '../../generated/graphql';
 //import './styles.css';
 
 interface Props {
@@ -20,7 +20,7 @@ const Company: React.FC<Props> = ({ data }) => (
                         <div key={i} className="col-md-4">
                             <div className="row">
                                 <div className="col-3">
-                                    <img src={"https://i.picsum.photos/id/"+((product.id??0) % 100)+"/50/50.jpg"} />
+                                    <img src={"https://i.picsum.photos/id/"+((product.id??0) % 100)+"/50/50.jpg"} alt="" />
                                 </div>
                                 <div className="col-9">
                                     <strong>{product.name}</strong>

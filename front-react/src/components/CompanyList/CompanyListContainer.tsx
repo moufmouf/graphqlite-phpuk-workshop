@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {CompaniesQuery, useCompaniesQuery} from '../../generated/graphql';
+import {useCompaniesQuery} from '../../generated/graphql';
 import CompanyList from './CompanyList';
 
 interface Props {
