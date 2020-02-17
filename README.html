@@ -1,0 +1,988 @@
+<h1 id="php-uk-conference-graphqlite-workshop">PHP UK Conference - GraphQLite workshop</h1>
+<p>This project contains the code to be downloaded by PHP UK Conference participants at the GraphQLite workshop.</p>
+<h2 id="project-organization">Project organization</h2>
+<p>In order to install the project, start by cloning it.</p>
+<p>This repository contains 2 branches:</p>
+<ul>
+<li><code>step0</code> is where you start</li>
+<li><code>master</code> is the final result at the end of the workshop</li>
+</ul>
+<p>Start with branch &quot;step0&quot;:</p>
+<pre><code class="lang-bash">$ git checkout step0
+</code></pre>
+<h2 id="installing">Installing</h2>
+<p>The repository provides a <code>docker-compose.yml</code> to set up the environment quickly.</p>
+<p>You will need Docker to start this project:</p>
+<pre><code class="lang-bash">$ docker-compose up
+</code></pre>
+<p>The images might take some time to download, be patient.</p>
+<p>When you start the containers, a number of commands will run automatically!</p>
+<ul>
+<li><code>composer install</code> is executed</li>
+<li>Migrations are applied</li>
+<li>Data fixtures are loaded (so the data in database is reset)</li>
+</ul>
+<p>Check the <code>docker-compose.yaml</code> file for more details.</p>
+<p>You should have several containers started:</p>
+<ul>
+<li><a href="http://localhost:81">http://localhost:81</a> points to the PHP container</li>
+<li><a href="http://localhost:82">http://localhost:82</a> points to the PhpMyAdmin container</li>
+<li><a href="http://localhost:83">http://localhost:83</a> points to a Svelte frontend</li>
+<li><a href="http://localhost:84">http://localhost:84</a> points to a React frontend </li>
+</ul>
+<h2 id="the-project-so-far">The project so far</h2>
+<p>We will be playing with a &quot;marketplace&quot;.</p>
+<p><strong>Users</strong> in our application belong to companies. A <strong>company</strong> is selling <strong>products</strong>. A product can have any number of <strong>options</strong> attached to it.</p>
+<p>At the beginning of the workshop, the project contains 4 entities:</p>
+<ul>
+<li><code>User</code></li>
+<li><code>Company</code></li>
+<li><code>Product</code></li>
+<li><code>Option</code></li>
+</ul>
+<p>There are 4 Doctrine repositories matching these entities.</p>
+<p>The Symfony security has been set up correctly (the <code>User</code> implements Symfony&#39;s <code>UserInterface</code>, the <code>security.yaml</code> file has been configured).</p>
+<p>GraphQLite has already been installed with a single command:</p>
+<pre><code class="lang-bash">$ composer require thecodingmachine/graphqlite-bundle
+</code></pre>
+<p>Some PHP code was already written, in particular, the Doctrine entities and repositories are already written.</p>
+<h2 id="step-1-writing-your-first-query">Step 1: Writing your first query</h2>
+<p>Let&#39;s write our first query: the list of companies.</p>
+<p>In the <code>src/GraphqlController/CompanyController.php</code> file, add a <code>getCompanies</code> method:</p>
+<pre><code class="lang-php">use TheCodingMachine\GraphQLite\Annotations\Query;
+</code></pre>
+<pre><code class="lang-php">    /**
+     * @Query()
+     */
+    public function getCompanies(?string $search)
+    {
+        return $this-&gt;companyRepository-&gt;search($search)-&gt;getArrayResult();
+    }
+</code></pre>
+<p>Pay attention to the <code>@Query</code> annotation and to the <code>use</code> statement.</p>
+<h3 id="annotation-support-in-your-ide">Annotation support in your IDE</h3>
+<p>When working with GraphQLite, you will deal with a lot of annotations. It is therefore very important to have an IDE<br>that can autocomplete these annotations for you.</p>
+<ul>
+<li>PHPStorm users need to install the <em>PHP Annotations</em> extension to benefit from auto-completion</li>
+<li>Avoid VS Code as it does not appear to have annotations support for PHP so far</li>
+<li>Netbeans IDE has native support for annotations</li>
+<li>Eclipse PDT need the &quot;Doctrine plugin&quot; to get support for annotations</li>
+</ul>
+<h2 id="testing-our-query">Testing our query</h2>
+<p>The Symfony GraphQLite bundle comes with GraphiQL, a GraphQL web-ide.</p>
+<p>Browse to <code>http://api.localhost/graphiql</code> </p>
+<p>... and you should see an error!</p>
+<p><img src="docs/images/exception1.png" alt=""></p>
+<blockquote>
+<p>For return type of App\GraphqlController\CompanyController::getCompanies, a type-hint is missing (or PHPDoc specifies a &quot;mixed&quot; type-hint). Please provide a better type-hint.</p>
+</blockquote>
+<p>GraphQL is a strictly typed protocol.</p>
+<p>PHP is optionally typed only. Since GraphQLite job is to map PHP types to GraphQL types, we will need to be explicit<br>and provide types in all annotated methods.</p>
+<pre><code class="lang-php">    /**
+     * @Query()
++    * @return Company[] 
+     */
+    public function getCompanies(?string $search)
+    {
+        return $this-&gt;companyRepository-&gt;search($search)-&gt;getArrayResult();
+    }
+</code></pre>
+<p>Note: since PHP does not have &quot;generics&quot; support, we need to add a docblock with the <code>@return</code> annotation to specify<br>the type of the array. GraphQLite will read the docblocks.</p>
+<p>So... browse again to <code>http://api.localhost/graphiql</code> </p>
+<p>... and you should see another error!</p>
+<p><img src="docs/images/exception2.png" alt=""></p>
+<blockquote>
+<p>For return type of App\GraphqlController\CompanyController::getCompanies, cannot map class &quot;App\Entity\Company&quot; to a known GraphQL type. Check your TypeMapper configuration.</p>
+</blockquote>
+<p>We told GraphQLite to expose the <code>Company</code> class, but we did not allow the <code>Company</code> class to be exposed as a GraphQL<br>type. We need to explicitly allow the class to be exposed, and every field in the class.</p>
+<p>Go to <code>src/Entity/Company.php</code>. Add a <code>@Type</code> annotation in the class docblock and a <code>@Field</code> annotation<br>in <code>getId()</code>, <code>getName()</code> and <code>getWebsite()</code> docblock:</p>
+<pre><code class="lang-php">use TheCodingMachine\GraphQLite\Annotations\Field;
+use TheCodingMachine\GraphQLite\Annotations\Type;
+
+/**
+ * @Type()
+ * @ORM\Entity(repositoryClass=&quot;App\Repository\CompanyRepository&quot;)
+ */
+class Company
+{
+    // ...
+
+    /**
+     * @Field()
+     */
+    public function getId(): ?int
+    {
+        return $this-&gt;id;
+    }
+
+    /**
+     * @Field()
+     */
+    public function getName(): ?string
+    {
+        return $this-&gt;name;
+    }
+
+    /**
+     * @Field()
+     */
+    public function getWebsite(): ?string
+    {
+        return $this-&gt;website;
+    }
+
+    // ...
+}
+</code></pre>
+<p>A few things to notice:</p>
+<ul>
+<li>once more, do not forget the <code>use</code> statement for the annotation</li>
+<li>the <code>@Field</code> annotation is meant to be applied on <strong>a getter</strong> (or any method), but cannot be applied on a property.<br>Unlike Doctrine (that does some black magic to access private properties of classes), GraphQLite is going through<br>proper methods to access the object state.</li>
+</ul>
+<p>Browse again to <code>http://api.localhost/graphiql</code> </p>
+<p>... success!</p>
+<p>You can now type your first GraphQL query!</p>
+<pre><code class="lang-graphql">{
+    companies(search: &quot;a&quot;) {
+        id
+        name
+    }
+}
+</code></pre>
+<p>Try to add another field and see if this works:</p>
+<pre><code class="lang-graphql">{
+    companies(search: &quot;a&quot;) {
+        id
+        name
+        website
+    }
+}
+</code></pre>
+<p>This example is a bit basic. It does not unleash the full potential of GraphQL.</p>
+<p>Let&#39;s add a new field &quot;products&quot; to query the products linked to a company:</p>
+<pre><code class="lang-php">    /**
+     * @Field()
+     * @return Product[]
+     */
+    public function getProducts()
+    {
+        return $this-&gt;products;
+    }
+</code></pre>
+<p>Browse again to <code>http://api.localhost/graphiql</code> </p>
+<p>... another error!</p>
+<p><img src="docs/images/exception3.png" alt=""></p>
+<blockquote>
+<p>For return type of App\Entity\Company::getProducts, cannot map class &quot;App\Entity\Product&quot; to a known GraphQL type. Check your TypeMapper configuration.</p>
+</blockquote>
+<p>Of course, GraphQLite does not know how to map the <code>Product</code> class.</p>
+<p><strong>Exercise</strong>:</p>
+<p>Add <code>@Type</code> annotations on every entity and <code>@Field</code> annotations on every getters.</p>
+<p>Play with the GraphQL queries, try to build a complex query like this:</p>
+<pre><code class="lang-graphql">query companiesContainingA {
+  companies(search: &quot;a&quot;) {
+    id
+    name
+    products {
+      name
+      price
+      vat
+      options {
+        name
+      }
+    }
+    users {
+      username
+    }
+  }
+}
+</code></pre>
+<p><em>Note:</em> the example above declares an &quot;operation name&quot; for the query (<code>companiesContainingA</code>)</p>
+<p>In GraphiQL IDE, you can have many operations in the same page. When you press the play button, you can select the<br>operation that will be executed.</p>
+<h2 id="step-2-enabling-pagination">Step 2: Enabling pagination</h2>
+<p>Note: if you did not complete the exercise in step 1, you can jump to the solution by changing your current branch:</p>
+<pre><code class="lang-bash">$ git checkout step2
+</code></pre>
+<p>In this second step, we are going to add pagination on our list of companies.</p>
+<p>At this point, you should already be able to add pagination by your own. Since GraphQLite turns function parameters<br>into GraphQL arguments, we could simply write:</p>
+<pre><code class="lang-php">    /**
+     * @Query()
+     * @return Company[] 
+     */
+    public function getCompanies(?string $search, int $limit = 10, int $offset = 0)
+    {
+        // ...
+    }
+</code></pre>
+<p>But we can do better!</p>
+<p>GraphQLite has native support for a pagination interface called &quot;beberlei/porpaginas&quot;. Any iterator implementing<br>the <code>Porpaginas\Result</code> interface will have native pagination. And good news, there is a class adapting Doctrine<br>queries to Porpaginas.</p>
+<p>If you want Porpaginas support, the first thing to do is add Porpaginas to your project:</p>
+<pre><code class="lang-bash">$ composer require beberlei/porpaginas
+</code></pre>
+<p>(no need to do this in the test project, it comes with Porpaginas installed)</p>
+<p>The next step is to return an object that implements the <code>Porpaginas\Result</code> interface:</p>
+<p><strong>src/GraphqlController/CompanyController.php</strong></p>
+<pre><code class="lang-php">use Porpaginas\Doctrine\ORM\ORMQueryResult;
+</code></pre>
+<pre><code class="lang-php">    /**
+     * @Query()
+     * @return ORMQueryResult|Company[]
+     */
+    public function getCompanies(?string $search): ORMQueryResult
+    {
+        return new ORMQueryResult($this-&gt;companyRepository-&gt;search($search));
+    }
+</code></pre>
+<p>The <code>ORMQueryResult</code> class is an adapter between a Doctrine <code>Query</code> or <code>QueryBuilder</code> class and a Porpaginas instance.</p>
+<p>Pay a close attention to the docblock: <code>@return ORMQueryResult|Company[]</code>.<br>We instruct GraphQLite that the returned value is both:</p>
+<ul>
+<li>a <code>ORMQueryResult</code> instance (that implements <code>Porpaginas\Result</code> interface)</li>
+<li>an iterable returning <code>Company</code> instances</li>
+</ul>
+<p>GraphQLite will understand that and enable pagination on companies for us automatically.</p>
+<p>But we are not done yet. So far, <code>$companyRepository-&gt;search()</code> returns an array of companies, while <code>ORMQueryResult</code><br>expects a Doctrine <code>Query</code> or <code>QueryBuilder</code> instance.</p>
+<p>Edit the <code>src/Repository/CompanyRepository.php</code> file:</p>
+<p><strong>src/Repository/CompanyRepository.php</strong></p>
+<pre><code class="lang-php">    public function search(?string $search): Query
+    {
+        return $this-&gt;createQueryBuilder(&#39;c&#39;)
+            -&gt;andWhere(&#39;c.name LIKE :val&#39;)
+            -&gt;orWhere(&#39;c.website LIKE :val&#39;)
+            -&gt;setParameter(&#39;val&#39;, &#39;%&#39;.$search.&#39;%&#39;)
+            -&gt;orderBy(&#39;c.id&#39;, &#39;ASC&#39;)
+            -&gt;getQuery()
+        ;
+    }
+</code></pre>
+<p>Notice how the method now returns a query.</p>
+<p>We are all set up! Let&#39;s go to GraphiQL and try our query.</p>
+<pre><code class="lang-graphql">query companies {
+  companies(search: &quot;&quot;) {
+    items(limit:10, offset: 0) {
+      id
+      name
+    }
+    count
+  }
+}
+</code></pre>
+<p>Notice how the structure changed:</p>
+<p>The <code>companies</code> query does not return the list of companies directly anymore. Instead, it returns an object with 2 fields:</p>
+<ul>
+<li><code>items(limit: Int, offset:Int)</code>: use this field to paginate the companies</li>
+<li><code>count</code>: use this field to get the <strong>total</strong> count of companies</li>
+</ul>
+<h2 id="step-3-security">Step 3: Security</h2>
+<p>GraphQLite can integrate with any framework security module.</p>
+<p>Our Symfony&#39;s project security was already set up using the <code>bin/console make:user</code> command.</p>
+<p>Navigate to GraphiQL: <code>http://api.localhost/graphiql</code>.</p>
+<p>You probably already noticed there is a <code>me</code> query available. It comes out of the box with the Symfony&#39;s GraphQLite bundle.</p>
+<pre><code class="lang-graphql">query me {
+  me {
+    userName
+    roles
+  }
+}
+</code></pre>
+<p>Actually, there is also a <code>login</code> and a <code>logout</code> mutation you can use.<br>A mutation is just like a query, expect it changes the state of your application. If we made a comparison with HTTP methods,<br>queries would be similar to GET and mutations would be similar to POST/PUT/DELETE.</p>
+<p>Let&#39;s login:</p>
+<pre><code class="lang-graphql">mutation login {
+  login(userName:&quot;user1@example.com&quot;, password:&quot;password&quot;) {
+    userName
+  }
+}
+</code></pre>
+<p>Now, try to run the &quot;me&quot; query again. You should get the &quot;user1&quot; user information.</p>
+<p>Congratulations, you are logged in! </p>
+<h3 id="accessing-all-the-fields-of-the-user-type">Accessing all the fields of the User type</h3>
+<p>Take a look at the <code>User</code> entity.</p>
+<p>It has many fields declared:</p>
+<pre><code class="lang-php">/**
+ * @Type()
+ * @ORM\Entity(repositoryClass=&quot;App\Repository\UserRepository&quot;)
+ */
+class User implements UserInterface, Serializable
+{
+    // ...
+
+    /**
+     * @Field()
+     */
+    public function getCompany(): ?Company
+    {
+        return $this-&gt;company;
+    }
+}
+</code></pre>
+<p>Yet, in the <code>me</code> query, we cannot query the &quot;company&quot; field.</p>
+<p>Try running this query:</p>
+<pre><code class="lang-graphql">query me {
+  me {
+    userName
+    roles
+    company {
+      id
+      name
+    }
+  }
+}
+</code></pre>
+<p>You will see this error:</p>
+<blockquote>
+<p>Cannot query field &quot;company&quot; on type &quot;SymfonyUserInterface&quot;. Did you mean to use an inline fragment on &quot;User&quot;?</p>
+</blockquote>
+<p><img src="docs/images/user_class_diagram.png" alt=""></p>
+<p>The explanation is simple. The <code>me</code> query provided returns a Symfony&#39;s <code>UserInterface</code>.</p>
+<pre><code class="lang-php">class MeController
+{
+    // ...
+
+    /**
+     * @Query()
+     */
+    public function me(): ?UserInterface { /*...*/ }
+}
+</code></pre>
+<p>However, the Symfony user interface does not have a <code>getCompany</code> field. Only the <code>App\Entity\User</code> class has that method.</p>
+<p>Hopefully, GraphQL comes with a notion of interfaces that can be applied on types. When a query or a field returns<br>an interface, you can tap into the concrete type fields using what we call a &quot;fragment&quot;.</p>
+<pre><code class="lang-graphql">query me {
+  me {
+    userName
+    roles
+    ... on User {
+      id
+      company {
+        id
+        name
+      }
+    }
+  }
+}
+</code></pre>
+<p>&quot;<code>... on User</code>&quot; marks the beginning of the fragment.<br>Basically, it tells GraphQL that is the user returned by <code>me</code> is a <code>User</code> instance, then you can fetch the additional<br>fields specified inside the fragment.</p>
+<h3 id="restricting-access-to-a-query-or-field-using-the-right-annotation">Restricting access to a query or field using the @Right annotation</h3>
+<p>Let&#39;s create a query that lists all users:</p>
+<p><strong>src/GraphqlController/UserController.php</strong></p>
+<pre><code class="lang-php">class UserController
+{
+    // ...
+
+    /**
+     * @Query()
+     * @return ORMQueryResult|User[]
+     */
+    public function users(?string $search)
+    {
+        return new ORMQueryResult($this-&gt;userRepository-&gt;search($search));
+    }
+}
+</code></pre>
+<p>We might want to restrict this query to the &quot;admin&quot; user.</p>
+<p>In Symfony, users are attributed &quot;roles&quot;.</p>
+<p>In our test environment, the &#39;admin&#39; has been granted a &quot;ROLE_ADMIN&quot; role (you can see that in the <code>src/DataFixtures/AppFixtures.php</code> file).</p>
+<p>To restrict a query (or a field) to a given role, you can use the <code>@Right</code> annotation: </p>
+<pre><code class="lang-php">use TheCodingMachine\GraphQLite\Annotations\Right;
+</code></pre>
+<pre><code class="lang-php">    /**
+     * @Query()
++    * @Right(&quot;ROLE_ADMIN&quot;)
+     * @return ORMQueryResult|User[]
+     */
+    public function users(?string $search)
+</code></pre>
+<p>In GraphiQL, try to run this query:</p>
+<pre><code class="lang-graphql">query users {
+  users {
+    items(limit: 10) {
+      id
+      email      
+    }
+  }
+}
+</code></pre>
+<p>You should see this error message:</p>
+<blockquote>
+<p>You do not have sufficient rights to access this field</p>
+</blockquote>
+<p>Now, login as the admin user:</p>
+<pre><code class="lang-graphql">mutation login {
+  login(userName:&quot;admin@example.com&quot;, password:&quot;password&quot;) {
+    userName
+  }
+}
+</code></pre>
+<p>Try running the <code>users</code> operation again in GraphiQL. This time, you should see the users list!</p>
+<p><strong>Exercise:</strong></p>
+<p>Try putting the <code>@Right</code> annotation on the <code>Product.margin</code> field and see if you can access it.</p>
+<p>Note: unlike in a REST API where you protect only the entry point, in GraphQL, you have to protect your model directly.<br>The security annotations (like <code>@Right</code>, <code>@Logged</code> or <code>@Security</code>) must be applied not only on controllers, but also<br>on all the exposed fields in your model.</p>
+<h3 id="fine-grained-security">Fine-grained security</h3>
+<p>The <code>@Right</code> annotation is only useful if you want to apply the same rule on all the<br>instances of a given type.</p>
+<p>But sometimes, security must be managed in a more flexible way.</p>
+<p>Let&#39;s have a look at our marketplace. A company can have many users.<br>Users have mail addresses.<br>Let&#39;s say I want my users to be able to see only their colleagues&#39; mail addresses:</p>
+<ul>
+<li>If a user is part of the same company as me, I can see his/her mail address</li>
+<li>If a user is not part of my company, I should get <em>null</em> instead.</li>
+</ul>
+<p>To do this, GraphQLite comes with a <code>@Security</code> annotation.</p>
+<p>Edit your <code>User.php</code> file:</p>
+<pre><code class="lang-php">use TheCodingMachine\GraphQLite\Annotations\Security;
+</code></pre>
+<pre><code class="lang-php">    /**
+     * @Field()
+     * @Security(&quot;this.getCompany() == user.getCompany()&quot;, failWith=null)
+     */
+    public function getEmail(): ?string
+    {
+        return $this-&gt;email;
+    }
+</code></pre>
+<p>As usual, pay a close attention to the &quot;use&quot; statement.<br>Beware! Symfony has its own &quot;Security&quot; annotation and the namespaces are different! </p>
+<p>Let&#39;s test this. Log as &quot;user1&quot;:</p>
+<pre><code class="lang-graphql">mutation login {
+  login(userName:&quot;user1@example.com&quot;, password:&quot;password&quot;) {
+    userName
+  }
+}
+</code></pre>
+<p>Run the query:</p>
+<pre><code class="lang-graphql">query companies {
+  companies {
+    items(limit:10, offset: 0) {
+      id
+      name
+      users {
+        username
+        email
+      }
+    }
+    count
+  }
+}
+</code></pre>
+<p>You should see the email address of users who are in the same company as &quot;user1&quot;.</p>
+<p>Let&#39;s have a closer look at the &quot;@Security&quot; annotation.</p>
+<p>GraphQLite <code>@Security</code> annotation mimics Symfony&#39;s <code>@Security</code> annotations.<br>It accepts simple code known as the <a href="https://symfony.com/doc/current/components/expression_language/syntax.html">&quot;Symfony expression language&quot;</a> (it looks a lot like a very small subset of Javascript)</p>
+<pre><code>@Security(&quot;this.getCompany() == user.getCompany()&quot;, failWith=null)
+</code></pre><p>In the expression, you can use a number of predefined variables. In particular:</p>
+<ul>
+<li><code>this</code> refers to the current user being user</li>
+<li><code>user</code> refers to the user that is logged in</li>
+<li>you can also refer to any parameter passed to the function</li>
+</ul>
+<p>The <code>failWith=null</code> tells GraphQLite to fail silently if the expression should return false.<br>Otherwise, a GraphQL error is returned.</p>
+<h3 id="security-using-a-voter">Security using a voter</h3>
+<p>The Symfony expression language is great for simple expressions, but it is limited.</p>
+<p>If you have complex logic to decide whether you want to allow access to a field or not,<br>you should rely on &quot;voters&quot;.</p>
+<p>Voters are built-in Symfony, they are not GraphQLite related.</p>
+<p>As a side note, if you are working with Laravel, the equivalent of Voters is <a href="https://laravel.com/docs/6.x/authorization#creating-policies">Laravel &quot;Policies&quot;</a></p>
+<p>GraphQLite will integrate with voters or policies based on the framework you are using.</p>
+<p>So a voter is a class that can decide whether to grant access or not to a given &quot;attribute&quot; of an object.</p>
+<p>In our class, we will decide to &quot;vote&quot; on the &quot;email&quot; attribute of the &quot;User&quot; entity.</p>
+<p>You can easily create a voter with the &quot;make:voter&quot; command:</p>
+<pre><code class="lang-bash">$ bin/console make:voter UserVoter
+</code></pre>
+<p>In the test project, the voter code is already present. Take a look at it<br>at <code>src/Security/Voter/UserVoter.php</code>.</p>
+<p>The <code>@Security</code> annotation exposes a <code>is_granted</code> function that calls the voters.<br>Let&#39;s rewrite our <code>@Security</code> annotation using this function:</p>
+<pre><code class="lang-php">    /**
+     * @Field()
+     * @Security(&quot;is_granted(&#39;email&#39;, this)&quot;, failWith=null)
+     */
+    public function getEmail(): ?string
+</code></pre>
+<p><code>is_granted</code> takes 2 parameters:</p>
+<ul>
+<li>the <code>attribute</code> being tested</li>
+<li>the object on which we test the attribute (so <code>this</code> in our case)</li>
+</ul>
+<p>Note how rights management annotations are coded right into your domain objects.<br>In my opinion, it makes security audits much easier as I can view the restrictions applied to a field just next to the<br>field declaration.</p>
+<h2 id="step-4-autowiring">Step 4: autowiring</h2>
+<p>GraphQLite makes it trivial to compute a &quot;dynamic&quot; field.<br>Indeed, fields are only getters, and you can write any logic in a getter.</p>
+<p>In our application, let&#39;s add a field to the &quot;Product&quot; type that computes the VAT of a product:</p>
+<pre><code class="lang-php">class Product
+{
+    // ...
+
+    /**
+     * @Field()
+     */
+    public function getVat(): float
+    {
+        // Very simple computation, the VAT is 20% of the price
+        return $this-&gt;price * 0.2;
+    }
+}
+</code></pre>
+<p>Test this field in GraphiQL:</p>
+<pre><code class="lang-graphql">query companies {
+  companies(search: &quot;&quot;) {
+    items(limit:100, offset: 0) {
+      id
+      name
+      products {
+        name
+        price
+        vat
+      }
+    }
+  }
+}
+</code></pre>
+<p>You should see that the new VAT field is correctly computed.</p>
+<p>Computed fields can be easily added, but sometimes, computation needs some extra logic and you put your code in a service.</p>
+<p>For instance, in real-life, the VAT computation of a product can be quite complex, depending on the product category,<br>the country, etc...</p>
+<p>Let&#39;s create a <code>VatService</code> class:</p>
+<pre><code class="lang-php">namespace App\Services;
+
+
+use App\Entity\Product;
+
+class VatService implements VatServiceInterface
+{
+    public function getVat(Product $product): float
+    {
+        // In a real life scenario, we would have way more
+        // code here.
+        return round($product-&gt;getPrice() * 0.2, 2);
+    }
+}
+</code></pre>
+<p>Now, we would like to be able to call the <code>VatService-&gt;getVat()</code> method from my <code>Product</code> entity.<br>But <code>Product</code> is an entity, not a service, so we cannot inject a service in its constructor.</p>
+<p>This is where autowiring field arguments comes into play.</p>
+<pre><code class="lang-php">use TheCodingMachine\GraphQLite\Annotations\Autowire;
+</code></pre>
+<pre><code class="lang-php">class Product
+{
+    // ...
+
+    /**
+     * @Field()
+     * @Autowire(for=&quot;$vatService&quot;)
+     */
+    public function getVat(VatService $vatService): float
+    {
+        return $vatService-&gt;getVat($this);
+    }
+}
+</code></pre>
+<p>Thanks to the <code>@Autowire</code> annotation, GraphQLite will inject the <code>VatService</code> service in the <code>$vatService</code> parameter.</p>
+<p>Run the query again:</p>
+<pre><code class="lang-graphql">query companies {
+  companies(search: &quot;&quot;) {
+    items(limit:100, offset: 0) {
+      id
+      name
+      products {
+        name
+        price
+        vat
+      }
+    }
+  }
+}
+</code></pre>
+<p>The VatService will be provided by GraphQLite.</p>
+<p>This looks a lot like &quot;Domain Driven Design&quot; where we try to push in our entities as much intelligence as possible.</p>
+<p>There is still something we need to fix though.</p>
+<p>Our <code>getVat</code> method requires directly the <code>VatService</code> <strong>class</strong>. This is bad because our entity, which is supposed<br>to be independent of any service now depends on an external service.</p>
+<p>When facing such an issue in Object Oriented languages, you use an &quot;interface&quot; to make <code>Product</code> depend on<br>a contract rather than a given implementation.<br>This will help us test the <code>Product</code> entity easily using a stub &quot;VatService&quot; service.</p>
+<p>Exercise:</p>
+<ul>
+<li>Refactor <code>VatService</code> by extracting a <code>VatServiceInterface</code> interface.</li>
+<li>Change the signature of <code>getVat()</code> from <code>getVat(VatService $vatService)</code> to <code>getVat(VatServiceInterface $vatService)</code></li>
+</ul>
+<p>Symfony&#39;s autowiring should detect that <code>VatService</code> is the only available implementation of <code>VatServiceInterface</code><br>so when GraphQLite will ask for the service implementing <code>VatServiceInterface</code>, Symfony will automatically serve<br>the <code>VatService</code> instance.</p>
+<p>Success!</p>
+<h2 id="step-5-mutations">Step 5: Mutations</h2>
+<p>So far, we used &quot;Queries&quot; to fetch data from the database. Let&#39;s now try to create new records and insert them.</p>
+<p>To do this, we need to use &quot;mutations&quot;.</p>
+<p>Mutations are GraphQL operations that can change the state of the application.<br>The difference between queries and mutations is mostly a semantic one. Nothing prevents you from altering your database<br>on a &quot;query&quot;, but you should definitely not do it (just like you would not save a record on a GET HTTP request in a REST<br>API).</p>
+<p>To create a mutation, you use the <code>@Mutation</code> annotation (how surprising! :) )</p>
+<p>Let&#39;s use a mutation to create a new <code>Product</code>. We will put the mutation in the <code>ProductController</code> class:</p>
+<p><strong>src/GraphqlController/ProductController.php</strong></p>
+<pre><code class="lang-php">use TheCodingMachine\GraphQLite\Annotations\Mutation;
+</code></pre>
+<pre><code class="lang-php">    /**
+     * @Mutation()
+     */
+    public function createProduct(string $name, float $price, int $companyId): Product
+    {
+        $product = new Product($name, $this-&gt;companyRepository-&gt;find($companyId));
+        $product-&gt;setPrice($price);
+        $this-&gt;em-&gt;persist($product);
+        $this-&gt;em-&gt;flush();
+        return $product;
+    }
+</code></pre>
+<p>Now, let&#39;s try to call this mutation:</p>
+<pre><code class="lang-graphql">mutation createProduct {
+  createProduct(
+    name: &quot;My product&quot;,
+    price: 42.24,
+    companyId: 55
+  ) {
+    id
+    name
+  }
+}
+</code></pre>
+<p>You should see the id and the name of the product we created.<br>Congratulations!</p>
+<p>Did you notice? We don&#39;t need to use a &quot;serializer&quot; to manage our request. Serialization and unserialization happens<br>in the GraphQL library.</p>
+<p>But wait! What if we have a very complex form?<br>For instance, what if we want to create a product with a number of options?</p>
+<p>Let&#39;s try this. Let&#39;s add a &quot;$options&quot; parameter to our mutation:</p>
+<p><strong>src/GraphqlController/ProductController.php</strong></p>
+<pre><code class="lang-php">    /**
+     * @Mutation()
+     * @param Option[] $options
+     */
+    public function createProduct(string $name, float $price, int $companyId, array $options): Product
+    {
+        $product = new Product($name, $this-&gt;companyRepository-&gt;find($companyId));
+        $product-&gt;setPrice($price);
+        foreach ($options as $option) {
+            $product-&gt;addOption($option);
+        }
+        $this-&gt;em-&gt;persist($product);
+        $this-&gt;em-&gt;flush();
+        return $product;
+    }
+</code></pre>
+<p>Let&#39;s go in GraphiQL and see what happens:</p>
+<blockquote>
+<p>For parameter $options, in App\GraphqlController\ProductController::createProduct, cannot map class &quot;App\Entity\Option&quot; to a known GraphQL input type. Check your TypeMapper configuration.</p>
+</blockquote>
+<p>GraphQLite is complaining: it does not know how to map the <code>Option</code> to an &quot;<strong>input type</strong>&quot;. An input type is a<br>GraphQL type that can be passed as an argument (as opposed to &quot;output types&quot; that are types returned by the server)</p>
+<p>In order to create an &quot;input type&quot;, we need the <code>@Factory</code> annotation. Let&#39;s create a factory:</p>
+<p><strong>src/GraphqlController/ProductController.php</strong></p>
+<pre><code class="lang-php">use TheCodingMachine\GraphQLite\Annotations\Factory;
+</code></pre>
+<pre><code class="lang-php">    /**
+     * @Factory()
+     */
+    public function optionFactory(string $name, float $price): Option
+    {
+        return new Option($name, $price);
+    }
+</code></pre>
+<p>When GraphQLite sees the <code>@Factory</code> annotation, it will first look at the <em>return type</em> of the function.<br>Here, the return type is <code>Option</code> so GraphQLite will use this factory when it needs to create a <code>Option</code> instance.<br>To create this instance, GraphQLite will require 2 arguments: <code>$name</code> and <code>$price</code>.</p>
+<p>And that&#39;s it!</p>
+<p>One last thing though. Because we need to tell Doctrine that we want to persist those options we just created.<br>Let&#39;s go back in the mutation and let&#39;s persist those.</p>
+<p>The final solution looks like this:</p>
+<p><strong>src/GraphqlController/ProductController.php</strong></p>
+<pre><code class="lang-php">    /**
+     * @Mutation()
+     * @param Option[] $options
+     */
+    public function createProduct(string $name, float $price, int $companyId, array $options): Product
+    {
+        $product = new Product($name, $this-&gt;companyRepository-&gt;find($companyId));
+        $product-&gt;setPrice($price);
+        foreach ($options as $option) {
+            $product-&gt;addOption($option);
+        }
+        $this-&gt;em-&gt;persist($product);
++       foreach ($product-&gt;getOptions() as $option) {
++           $this-&gt;em-&gt;persist($option);
++       }
+        $this-&gt;em-&gt;flush();
+        return $product;
+    }
+
+    /**
+     * @Factory()
+     */
+    public function optionFactory(string $name, float $price): Option
+    {
+        return new Option($name, $price);
+    }
+</code></pre>
+<p>Let&#39;s try our new mutation:</p>
+<pre><code class="lang-graphql">mutation createProduct {
+  createProduct(product: {
+    name: &quot;My product&quot;,
+    price: 42.24,
+    companyId: 55,
+    options: [
+      {
+        name: &quot;My option&quot;,
+        price: 12
+      }
+    ]
+  }) {
+    id
+    name
+    options {
+      name
+    }
+  }
+}
+</code></pre>
+<p>You should see the new mutation created.</p>
+<p>We can test it was correctly saved by calling the <code>product</code> query:</p>
+<pre><code class="lang-graphql">query product {
+  product(id: [the id returned by the mutation]) {
+    id
+    name
+    price
+    options {
+      name
+      price
+    }
+  }
+}
+</code></pre>
+<h2 id="step-8-validation">Step 8: Validation</h2>
+<p>Congratulations! Now, you know how to query and update your database using GraphQL.</p>
+<p>The GraphQL type system validates automatically the structure of the data passed by our client.<br>However, the client could still pass garbage data. For instance, he could pass an empty name, or a negative product price:</p>
+<pre><code class="lang-graphql">mutation createProduct {
+  createProduct(product: {
+    name: &quot;&quot;,
+    price: -12,
+    companyId: 55
+  }) {
+    id
+  }
+}
+</code></pre>
+<p>Oopsy.</p>
+<p>To avoid this, we need to <em>validate</em> our data, and return an error if something goes wrong.</p>
+<p>The simplest solution is to throw an exception when some validation fails:</p>
+<p><strong>src/GraphqlController/ProductController.php</strong></p>
+<pre><code class="lang-php">    /**
+     * @Mutation()
+     * @param Option[] $options
+     */
+    public function createProduct(string $name, float $price, int $companyId, array $options): Product
+    {
+        if ($name === &#39;&#39;) {
+            throw new GraphQLException(&#39;Empty product names are not allowed&#39;, 400);
+        }
+        if ($price &lt; 0) {
+            throw new GraphQLException(&#39;The price must be positive&#39;, 400);
+        }
+        // ...
+    }
+</code></pre>
+<p>The <code>GraphQLException</code> has a special behaviour. It is caught by GraphQLite and automatically transformed into a GraphQL error.<br>Actually, any exception implementing the <code>GraphQLExceptionInterface</code> will be turned into GraphQL errors by GraphQLite.</p>
+<p>Run the mutation again, you should see this error:</p>
+<pre><code class="lang-json">{
+  &quot;errors&quot;: [
+    {
+      &quot;message&quot;: &quot;Empty product names are not allowed&quot;,
+      &quot;extensions&quot;: {
+        &quot;category&quot;: &quot;Exception&quot;
+      },
+      &quot;locations&quot;: [
+        {
+          &quot;line&quot;: 59,
+          &quot;column&quot;: 3
+        }
+      ],
+      &quot;path&quot;: [
+        &quot;createProduct&quot;
+      ]
+    }
+  ]
+}
+</code></pre>
+<p>Success! We have a valid GraphQL error response.<br>GraphQL clients expect errors to follow this structure and can act accordingly.</p>
+<p>But this is not optimal yet. First, there are 2 violations in our mutation and we are returning only the first.<br>Then, violations are detected in the controller. We would like to push those in the domain layer.</p>
+<h3 id="using-symfony-validation">Using Symfony validation</h3>
+<p>GraphQLite can integration with Symfony validation.</p>
+<p>Unless everything that was presented before, this feature is specific to Symfony.<br>If you are using Laravel, there is also an integration with <a href="https://graphqlite.thecodingmachine.io/docs/laravel-package-advanced#support-for-laravel-validation-rules">Laravel validators</a>.</p>
+<p>In Symfony, you can use validators to validate your domain objects.<br>You do this by putting annotations on your model&#39;s properties.</p>
+<p>Let&#39;s add 2 validators in our <code>Product</code> entity:</p>
+<pre><code class="lang-php">use Symfony\Component\Validator\Constraints as Assert;
+
+class Product
+{
+    // ...
+
+    /**
+     * @ORM\Column(type=&quot;string&quot;, length=255)
++    * @Assert\NotBlank()
+     */
+    private string $name;
+
+    /**
+     * @ORM\Column(type=&quot;float&quot;, nullable=true)
++    * @Assert\GreaterThanOrEqual(0)
+     */
+    private ?float $price;
+
+    // ...
+}
+</code></pre>
+<p><code>@Assert\NotBlank</code> and <code>@Assert\GreaterThanOrEqual</code> are 2 standard &quot;assert&quot; annotations from the Symfony validator component.</p>
+<p>Once annotations are in place, we need to call the &quot;validator&quot; service to validate our instance.</p>
+<p><strong>src/GraphqlController/ProductController.php</strong></p>
+<pre><code class="lang-php">use TheCodingMachine\Graphqlite\Validator\ValidationFailedException;
+</code></pre>
+<pre><code class="lang-php">class ProductController
+{
+    /**
+     * @Mutation()
+     * @param Option[] $options
+     */
+    public function createProduct(string $name, float $price, int $companyId, array $options = []): Product
+    {
+        $product = new Product($name, $this-&gt;companyRepository-&gt;find($companyId));
+        $product-&gt;setPrice($price);
+        foreach ($options as $option) {
+            $product-&gt;addOption($option);
+        }
+
++       // Let&#39;s validate the product
++       $errors = $this-&gt;validator-&gt;validate($product);
++       // Throw an appropriate GraphQL exception if validation errors are encountered
++       ValidationFailedException::throwException($errors);
+
+        $this-&gt;em-&gt;persist($product);
+        foreach ($product-&gt;getOptions() as $option) {
+            $this-&gt;em-&gt;persist($option);
+        }
+        $this-&gt;em-&gt;flush();
+        return $product;
+    }
+}
+</code></pre>
+<p>The <code>ValidationFailedException</code> class provided by GraphQLite can turn validation errors from Symfony into an &quot;aggregate&quot;<br>exception containing all the errors we want to show the user.</p>
+<p>Let&#39;s run our mutation again in GraphQLite. Now, you should see the 2 errors returned:</p>
+<pre><code class="lang-json">{
+  &quot;errors&quot;: [
+    {
+      &quot;message&quot;: &quot;This value should not be blank.&quot;,
+      &quot;extensions&quot;: {
+        &quot;code&quot;: &quot;c1051bb4-d103-4f74-8988-acbcafc7fdc3&quot;,
+        &quot;field&quot;: &quot;name&quot;,
+        &quot;category&quot;: &quot;Validate&quot;
+      },
+      // ...
+    },
+    {
+      &quot;message&quot;: &quot;This value should be greater than or equal to 0.&quot;,
+      &quot;extensions&quot;: {
+        &quot;code&quot;: &quot;ea4e51d1-3342-48bd-87f1-9e672cd90cad&quot;,
+        &quot;field&quot;: &quot;price&quot;,
+        &quot;category&quot;: &quot;Validate&quot;
+      },
+      // ...
+    }
+  ]
+}
+</code></pre>
+<p>Success! We now have 2 error messages, one for each field in error.<br>Furthermore, we pushed validation rules on the domain layer, which is also a good thing!</p>
+<h2 id="step-9-performance-issues">Step 9: Performance issues</h2>
+<p>A well known performance issue in GraphQL is called the &quot;N+1&quot; issue.</p>
+<p>Try running this query in GraphiQL:</p>
+<pre><code class="lang-graphql">query companies {
+  companies(search: &quot;&quot;) {
+    items(limit:100, offset: 0) {
+      id
+      name
+      products {
+        name
+        price
+        vat
+      }
+    }
+    count
+  }
+}
+</code></pre>
+<p>Now, check the Docker logs for your container (they should be displayed in the output of the <code>docker-compose up</code> command you run earlier).</p>
+<p>You will see something like this:</p>
+<pre><code>api_1         | [2020-02-06T16:29:15.604087+00:00] doctrine.DEBUG: SELECT c0_.id AS id_0, c0_.name AS name_1, c0_.website AS website_2 FROM company c0_ WHERE (c0_.name LIKE ? OR c0_.website LIKE ?) AND c0_.id IN (?) ORDER BY c0_.id ASC [&quot;%%&quot;,&quot;%%&quot;,[2701,2702,2703,2704,2705,2706,2707,2708,2709,2710,2711,2712,2713,2714,2715,2716,2717,2718,2719,2720,2721,2722,2723,2724,2725,2726,2727,2728,2729,2730,2731,2732,2733,2734,2735,2736,2737,2738,2739,2740,2741,2742,2743,2744,2745,2746,2747,2748,2749,2750,2751,2752,2753,2754,2755,2756,2757,2758,2759,2760,2761,2762,2763,2764,2765,2766,2767,2768,2769,2770,2771,2772,2773,2774,2775,2776,2777,2778,2779,2780,2781,2782,2783,2784,2785,2786,2787,2788,2789,2790,2791,2792,2793,2794,2795,2796,2797,2798,2799,2800]] []
+api_1         | [2020-02-06T16:29:15.624405+00:00] doctrine.DEBUG: SELECT t0.id AS id_1, t0.name AS name_2, t0.price AS price_3, t0.margin AS margin_4, t0.company_id AS company_id_5 FROM product t0 WHERE t0.company_id = ? [2701] []
+api_1         | [2020-02-06T16:29:15.638207+00:00] doctrine.DEBUG: SELECT t0.id AS id_1, t0.name AS name_2, t0.price AS price_3, t0.margin AS margin_4, t0.company_id AS company_id_5 FROM product t0 WHERE t0.company_id = ? [2702] []
+api_1         | [2020-02-06T16:29:15.658848+00:00] doctrine.DEBUG: SELECT t0.id AS id_1, t0.name AS name_2, t0.price AS price_3, t0.margin AS margin_4, t0.company_id AS company_id_5 FROM product t0 WHERE t0.company_id = ? [2703] []
+api_1         | [2020-02-06T16:29:15.667290+00:00] doctrine.DEBUG: SELECT t0.id AS id_1, t0.name AS name_2, t0.price AS price_3, t0.margin AS margin_4, t0.company_id AS company_id_5 FROM product t0 WHERE t0.company_id = ? [2704] []
+api_1         | [2020-02-06T16:29:15.673593+00:00] doctrine.DEBUG: SELECT t0.id AS id_1, t0.name AS name_2, t0.price AS price_3, t0.margin AS margin_4, t0.company_id AS company_id_5 FROM product t0 WHERE t0.company_id = ? [2705] []
+api_1         | [2020-02-06T16:29:15.680146+00:00] doctrine.DEBUG: SELECT t0.id AS id_1, t0.name AS name_2, t0.price AS price_3, t0.margin AS margin_4, t0.company_id AS company_id_5 FROM product t0 WHERE t0.company_id = ? [2706] []
+...
+</code></pre><p>The 2 first queries are run by the Doctrine paginator to return the list of 100 companies we asked.<br>Then, for each of these companies, we are fetching the list of products attached with one query.</p>
+<p>That&#39;s a lot of queries (102 queries!)</p>
+<p>The first thing we can notice is that it is relatively fast! The query runs in ~1.6s on my machine (your mileage may vary).<br>MySQL is indeed quite optimized and all the requests are performed on indexed columns.</p>
+<p>If we were writing pure SQL, we would probably use a join to write the query. Even then, the SQL query would not be trivial because<br>we want only 100 companies and for each companies the complete list of products attached (the LIMIT must be applied on companies, not on the global result set).</p>
+<p>There are a number of solutions to limit the number of requests performed.</p>
+<p>Let&#39;s face it, when it comes to Doctrine, there is no silver-bullet.</p>
+<p>A common pattern in GraphQL to solve those performance issues is the &quot;data-loader&quot; pattern.<br>The &quot;data-loader&quot; pattern allows for making a batch of all fields we need to gather and then, emit only one query to the<br>database, passing all the IDs in one giant &quot;WHERE ... IN (...)&quot; request.</p>
+<p>GraphQLite has support for the data-loader pattern through the &quot;prefetchMethod&quot; attribute.</p>
+<p>Let&#39;s see how this works on the &quot;Company::getProducts()&quot; field.</p>
+<pre><code class="lang-php">    /**
+     * @Field(prefetchMethod=&quot;prefetchProducts&quot;)
+     * @return Product[]
+     */
+    public function getProducts($sortedProducts)
+    {
+        return $sortedProducts[$this-&gt;getId()] ?? [];
+    }
+
+    /**
+     * @param Company[] $companies
+     * @Autowire(for=&quot;$productRepository&quot;)
+     * @return array&lt;int, array&lt;Product&gt;&gt;
+     */
+    public function prefetchProducts(iterable $companies, ProductRepository $productRepository)
+    {
+        $products = $productRepository-&gt;findByCompanies($companies);
+
+        $sortedProducts = [];
+        foreach ($products as $product) {
+            $sortedProducts[$product-&gt;getCompany()-&gt;getId()][] = $product;
+        }
+
+        return $sortedProducts;
+    }
+</code></pre>
+<p>The <code>getProducts</code> method is annotated with <code>@Field(prefetchMethod=&quot;prefetchProducts&quot;)</code>.<br>When GraphQLite sees this, instead of directly resolving the field for each company, it will first build a list of all the companies<br>that it has resolved.</p>
+<p>This list of companies is passed as the first argument to the method specified in <code>prefetchMethod</code> attribute.</p>
+<p>So in our case, the <code>prefetchProducts</code> method will receive the list of companies that requires the products.</p>
+<p>The important thing to understand is that:</p>
+<ul>
+<li><code>prefetchProducts</code> will be called only once</li>
+<li><code>getProducts</code> will be called 100 times</li>
+</ul>
+<p>So <code>prefetchProducts</code> must do the heavy lifting and <code>getProducts</code> must be fast.</p>
+<p>In <code>prefetchProducts</code>, we can write a giant query to fetch the list of products linked to one of the companies:</p>
+<pre><code class="lang-php">$products = $productRepository-&gt;findByCompanies($companies);
+</code></pre>
+<p>with:</p>
+<pre><code class="lang-php">class ProductRepository extends ServiceEntityRepository
+    // ...
+    public function findByCompanies(array $companies)
+    {
+        $ids = array_map(function(Company $company) { return $company-&gt;getId(); }, $companies);
+
+        return $this-&gt;createQueryBuilder(&#39;p&#39;)
+            -&gt;andWhere(&#39;IDENTITY(p.company) IN (:values)&#39;)
+            -&gt;setParameter(&#39;values&#39;, $ids)
+            -&gt;getQuery()
+            -&gt;getResult()
+            ;
+    }
+}
+</code></pre>
+<p>Then, we order this list of products by company id:</p>
+<pre><code class="lang-php">        $sortedProducts = [];
+        foreach ($products as $product) {
+            $sortedProducts[$product-&gt;getCompany()-&gt;getId()][] = $product;
+        }
+</code></pre>
+<p>By convention, the value returned by <code>prefetchProducts</code> will be passed as the first argument to <code>getProducts</code>.<br>From there, it is easy to find the list of products attached to the current company by performing a lookup in the data<br>generated by <code>prefetchProducts</code>.</p>
+<pre><code class="lang-php">    public function getProducts($sortedProducts)
+    {
+        return $sortedProducts[$this-&gt;getId()] ?? [];
+    }
+</code></pre>
+<p>Let&#39;s run the query again in GraphiQL and let&#39;s have a look at the docker logs:</p>
+<pre><code>api_1         | [2020-02-06T16:58:27.922108+00:00] doctrine.DEBUG: SELECT DISTINCT id_0 FROM (SELECT DISTINCT id_0 FROM (SELECT c0_.id AS id_0, c0_.name AS name_1, c0_.website AS website_2 FROM company c0_ WHERE c0_.name LIKE ? OR c0_.website LIKE ?) dctrn_result_inner ORDER BY id_0 ASC) dctrn_result LIMIT 100 [&quot;%%&quot;,&quot;%%&quot;] []
+api_1         | [2020-02-06T16:58:27.930745+00:00] doctrine.DEBUG: SELECT c0_.id AS id_0, c0_.name AS name_1, c0_.website AS website_2 FROM company c0_ WHERE (c0_.name LIKE ? OR c0_.website LIKE ?) AND c0_.id IN (?) ORDER BY c0_.id ASC [&quot;%%&quot;,&quot;%%&quot;,[2701,2702,2703,2704,2705,2706,2707,2708,2709,2710,2711,2712,2713,2714,2715,2716,2717,2718,2719,2720,2721,2722,2723,2724,2725,2726,2727,2728,2729,2730,2731,2732,2733,2734,2735,2736,2737,2738,2739,2740,2741,2742,2743,2744,2745,2746,2747,2748,2749,2750,2751,2752,2753,2754,2755,2756,2757,2758,2759,2760,2761,2762,2763,2764,2765,2766,2767,2768,2769,2770,2771,2772,2773,2774,2775,2776,2777,2778,2779,2780,2781,2782,2783,2784,2785,2786,2787,2788,2789,2790,2791,2792,2793,2794,2795,2796,2797,2798,2799,2800]] []
+api_1         | [2020-02-06T16:58:27.994509+00:00] doctrine.DEBUG: SELECT p0_.id AS id_0, p0_.name AS name_1, p0_.price AS price_2, p0_.margin AS margin_3, p0_.company_id AS company_id_4 FROM product p0_ INNER JOIN company c1_ WHERE c1_.id IN (?) [[2701,2702,2703,2704,2705,2706,2707,2708,2709,2710,2711,2712,2713,2714,2715,2716,2717,2718,2719,2720,2721,2722,2723,2724,2725,2726,2727,2728,2729,2730,2731,2732,2733,2734,2735,2736,2737,2738,2739,2740,2741,2742,2743,2744,2745,2746,2747,2748,2749,2750,2751,2752,2753,2754,2755,2756,2757,2758,2759,2760,2761,2762,2763,2764,2765,2766,2767,2768,2769,2770,2771,2772,2773,2774,2775,2776,2777,2778,2779,2780,2781,2782,2783,2784,2785,2786,2787,2788,2789,2790,2791,2792,2793,2794,2795,2796,2797,2798,2799,2800]] []
+</code></pre><p>Success!!! We have only 3 queries instead of 102.</p>
+<p>Let&#39;s see how long the query took: 520ms (vs 650ms previously).</p>
+<p>You can notice that the performance is better, but not immensely better.</p>
+<p>Please note that MySQL and PHP are on the same host, so latency is quite short.<br>With a MySQL on another physical server, we could expect a more important difference.</p>
+<p>Doctrine performance can be a strange beast and MySQL is very good at answering short queries.</p>
+<p>Conclusion: always test your performance optimizations.</p>
+<h2 id="front-end">Front-end</h2>
+<p><a href="https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/">https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/</a></p>

@@ -6,15 +6,16 @@ This project contains the code to be downloaded by PHP UK Conference participant
 
 In order to install the project, start by cloning it.
 
-This repository contains many branches all named "stepXX-some-description".
+This repository contains 2 branches:
+
+- `step0` is where you start
+- `master` is the final result at the end of the workshop
 
 Start with branch "step0":
 
 ```bash
 $ git checkout step0
 ```
-
-At any point in the workshop, you can fast forward by switching to the correct branch.
 
 
 ## Installing
@@ -37,15 +38,12 @@ When you start the containers, a number of commands will run automatically!
 
 Check the `docker-compose.yaml` file for more details.
 
-If you are running Windows or MacOS, you may need to edit your `/etc/hosts` file (on Windows, the file is in `c:\Windows\System32\Drivers\etc\hosts` and you need to be Administrator to edit it).
+You should have several containers started:
 
-Add those lines:
-
-**/etc/hosts**
-```
-127.0.0.1 api.localhost
-127.0.0.1 phpmyadmin.localhost
-```
+- http://localhost:81 points to the PHP container
+- http://localhost:82 points to the PhpMyAdmin container
+- http://localhost:83 points to a Svelte frontend
+- http://localhost:84 points to a React frontend 
 
 ## The project so far
 
@@ -69,6 +67,8 @@ GraphQLite has already been installed with a single command:
 ```bash
 $ composer require thecodingmachine/graphqlite-bundle
 ```
+
+Some PHP code was already written, in particular, the Doctrine entities and repositories are already written.
 
 ## Step 1: Writing your first query
 
@@ -278,16 +278,12 @@ In GraphiQL IDE, you can have many operations in the same page. When you press t
 operation that will be executed.
 
 
-TODO: give the branch to switch to.
-
-
 ## Step 2: Enabling pagination
 
 Note: if you did not complete the exercise in step 1, you can jump to the solution by changing your current branch:
 
-TODO: Fix branch name
 ```bash
-$ git checkout step2-XXX
+$ git checkout step2
 ```
 
 In this second step, we are going to add pagination on our list of companies.
