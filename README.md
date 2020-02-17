@@ -1,9 +1,3 @@
-TODO: change this project so that GraphiQL runs locally?
-=> hard!
-=> Provide a Graphql-Playground install on the USB key?
-
-
-
 # PHP UK Conference - GraphQLite workshop
 
 This project contains the code to be downloaded by PHP UK Conference participants at the GraphQLite workshop.
