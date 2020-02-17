@@ -11,7 +11,6 @@ use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 
 /**
- * @Type()
  * @ORM\Entity(repositoryClass="App\Repository\CompanyRepository")
  */
 class Company
@@ -51,17 +50,11 @@ class Company
         $this->users = new ArrayCollection();
     }
 
-    /**
-     * @Field()
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @Field()
-     */
     public function getName(): ?string
     {
         return $this->name;
@@ -74,9 +67,6 @@ class Company
         return $this;
     }
 
-    /**
-     * @Field()
-     */
     public function getWebsite(): ?string
     {
         return $this->website;
@@ -90,7 +80,6 @@ class Company
     }
 
     /**
-     * @Field()
      * @return Product[]
      */
     public function getProducts()
@@ -98,31 +87,31 @@ class Company
         return $this->products;
     }
 
-    /**
-     * @Field(prefetchMethod="prefetchProducts")
-     * @return Product[]
-     */
-    /*public function getProducts($sortedProducts)
-    {
-        return $sortedProducts[$this->getId()] ?? [];
-    }*/
-
-    /**
-     * @param Company[] $companies
-     * @Autowire(for="$productRepository")
-     * @return array<int, array<Product>>
-     */
-    public function prefetchProducts(iterable $companies, ProductRepository $productRepository)
-    {
-        $products = $productRepository->findByCompanies($companies);
-
-        $sortedProducts = [];
-        foreach ($products as $product) {
-            $sortedProducts[$product->getCompany()->getId()][] = $product;
-        }
-
-        return $sortedProducts;
-    }
+//    /**
+//     * @Field(prefetchMethod="prefetchProducts")
+//     * @return Product[]
+//     */
+//    public function getProducts($sortedProducts)
+//    {
+//        return $sortedProducts[$this->getId()] ?? [];
+//    }
+//
+//    /**
+//     * @param Company[] $companies
+//     * @Autowire(for="$productRepository")
+//     * @return array<int, array<Product>>
+//     */
+//    public function prefetchProducts(iterable $companies, ProductRepository $productRepository)
+//    {
+//        $products = $productRepository->findByCompanies($companies);
+//
+//        $sortedProducts = [];
+//        foreach ($products as $product) {
+//            $sortedProducts[$product->getCompany()->getId()][] = $product;
+//        }
+//
+//        return $sortedProducts;
+//    }
 
     public function addProduct(Product $product): self
     {
@@ -148,7 +137,6 @@ class Company
     }
 
     /**
-     * @Field()
      * @return Collection|User[]
      */
     public function getUsers(): Collection

@@ -11,7 +11,6 @@ use TheCodingMachine\GraphQLite\Annotations\Security;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 
 /**
- * @Type()
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 class User implements UserInterface, Serializable
@@ -57,35 +56,19 @@ class User implements UserInterface, Serializable
         $this->setPlainPassword($plainPassword, $passwordEncoder);
     }
 
-    /**
-     * @Field()
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @Field()
-     * //Security("this.getCompany() == user.getCompany()", failWith=null)
-     * @Security("is_granted('email', this)", failWith=null)
-     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
     /**
      * A visual identifier that represents this user.
      *
-     * @Field()
      * @see UserInterface
      */
     public function getUsername(): string
@@ -94,17 +77,14 @@ class User implements UserInterface, Serializable
     }
 
     /**
-     * @param string $userName
+     * @see UserInterface
      */
-    public function setUserName(string $userName): self
+    public function getPassword(): string
     {
-        $this->userName = $userName;
-
-        return $this;
+        return (string) $this->password;
     }
 
     /**
-     * @Field()
      * @return string[]
      * @see UserInterface
      */
@@ -117,19 +97,33 @@ class User implements UserInterface, Serializable
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    public function getCompany(): ?Company
     {
-        $this->roles = $roles;
+        return $this->company;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }
 
     /**
-     * @see UserInterface
+     * @param string $userName
      */
-    public function getPassword(): string
+    public function setUserName(string $userName): self
     {
-        return (string) $this->password;
+        $this->userName = $userName;
+
+        return $this;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
     }
 
     public function setPlainPassword(string $plainPassword, UserPasswordEncoderInterface $passwordEncoder): self
@@ -161,14 +155,6 @@ class User implements UserInterface, Serializable
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
-    }
-
-    /**
-     * @Field()
-     */
-    public function getCompany(): ?Company
-    {
-        return $this->company;
     }
 
     public function setCompany(?Company $company): self

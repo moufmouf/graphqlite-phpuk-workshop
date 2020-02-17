@@ -53,69 +53,50 @@ class ProductController
 //        return $product;
 //    }
 
-    /**
-     * @Mutation()
-     * @param Option[] $options
-     */
-    /*public function createProduct(
-        string $name,
-        float $price,
-        int $companyId,
-        array $options): Product
-    {
-        if ($name === '') {
-            throw new GraphQLException('Empty product names are not allowed', 400);
-        }
-        if ($price < 0) {
-            throw new GraphQLException('The price must be positive', 400);
-        }
-        // ...
-    }*/
+//    /**
+//     * @Mutation()
+//     * @param Option[] $options
+//     */
+//    public function createProduct(
+//            string $name,
+//            float $price,
+//            int $companyId,
+//            array $options = []): Product
+//    {
+//        $product = new Product($name,
+//            $this->companyRepository->
+//            find($companyId));
+//        $product->setPrice($price);
+//        foreach ($options as $option) {
+//            $product->addOption($option);
+//        }
+//
+//        // Let's validate the product
+//        $errors = $this->validator->validate($product);
+//        // Throw an appropriate GraphQL exception if validation errors are encountered
+//        ValidationFailedException::throwException($errors);
+//
+//        $this->em->persist($product);
+//        foreach ($product->getOptions() as $option) {
+//            $this->em->persist($option);
+//        }
+//        $this->em->flush();
+//        return $product;
+//    }
 
-    /**
-     * @Mutation()
-     * @param Option[] $options
-     */
-    public function createProduct(
-            string $name,
-            float $price,
-            int $companyId,
-            array $options = []): Product
-    {
-        $product = new Product($name,
-            $this->companyRepository->
-            find($companyId));
-        $product->setPrice($price);
-        foreach ($options as $option) {
-            $product->addOption($option);
-        }
+//    /**
+//     * @Query()
+//     */
+//    public function getProduct(int $productId): ?Product
+//    {
+//        return $this->productRepository->find($productId);
+//    }
 
-        // Let's validate the product
-        $errors = $this->validator->validate($product);
-        // Throw an appropriate GraphQL exception if validation errors are encountered
-        ValidationFailedException::throwException($errors);
-
-        $this->em->persist($product);
-        foreach ($product->getOptions() as $option) {
-            $this->em->persist($option);
-        }
-        $this->em->flush();
-        return $product;
-    }
-
-    /**
-     * @Query()
-     */
-    public function getProduct(int $productId): ?Product
-    {
-        return $this->productRepository->find($productId);
-    }
-
-    /**
-     * @Factory()
-     */
-    public function optionFactory(string $name, float $price): Option
-    {
-        return new Option($name, $price);
-    }
+//    /**
+//     * @Factory()
+//     */
+//    public function optionFactory(string $name, float $price): Option
+//    {
+//        return new Option($name, $price);
+//    }
 }

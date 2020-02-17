@@ -12,7 +12,6 @@ use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 
 /**
- * @Type()
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
  */
 class Product

@@ -9,7 +9,6 @@ use TheCodingMachine\GraphQLite\Annotations\Type;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\OptionRepository")
  * @ORM\Table(name="product_option")
- * @Type()
  */
 class Option
 {
@@ -43,20 +42,24 @@ class Option
         $this->product = $product;
     }
 
-    /**
-     * @Field()
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @Field()
-     */
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
     }
 
     public function setName(string $name): self
@@ -66,27 +69,11 @@ class Option
         return $this;
     }
 
-    /**
-     * @Field()
-     */
-    public function getPrice(): ?float
-    {
-        return $this->price;
-    }
-
     public function setPrice(?float $price): self
     {
         $this->price = $price;
 
         return $this;
-    }
-
-    /**
-     * @Field()
-     */
-    public function getProduct(): ?Product
-    {
-        return $this->product;
     }
 
     public function setProduct(?Product $product): self

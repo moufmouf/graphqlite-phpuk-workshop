@@ -21,30 +21,26 @@ class CompanyController
         $this->companyRepository = $companyRepository;
     }
 
-    /**
-     * @Query()
-     * @return Company[]
-     */
-    /*public function getCompanies(?string $search)
-    {
-        return $this->companyRepository->search($search)->getResult();
-    }*/
-    /**
-     * @Query()
-     * @param string|null $search
-     * @return ORMQueryResult|Company[]
-     */
     public function getCompanies(?string $search)
     {
-        return new ORMQueryResult($this->companyRepository->search($search));
+        return $this->companyRepository->search($search)->getResult();
     }
 
-    /**
-     * @Query()
-     * @param int $id
-     */
-    public function getCompany(int $id): ?Company
-    {
-        return $this->companyRepository->find($id);
-    }
+//    /**
+//     * @Query()
+//     * @param string|null $search
+//     * @return ORMQueryResult|Company[]
+//     */
+//    public function getCompanies(?string $search)
+//    {
+//        return new ORMQueryResult($this->companyRepository->search($search));
+//    }
+
+//    /**
+//     * @Query()
+//     */
+//    public function getCompany(int $id): ?Company
+//    {
+//        return $this->companyRepository->find($id);
+//    }
 }
