@@ -21,6 +21,7 @@ class AppFixtures extends Fixture
     {
         $this->passwordEncoder = $passwordEncoder;
         $this->faker = Factory::create();
+        $this->faker->seed(12345);
         ProviderCollectionHelper::addAllProvidersTo($this->faker);
     }
 

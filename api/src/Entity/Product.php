@@ -167,4 +167,12 @@ class Product
     {
         return $vatService->getVat($this);
     }
+
+    /**
+     * @Field()
+     */
+    /*public function getVat(): float
+    {
+        return $this->price * 0.2;
+    }*/
 }

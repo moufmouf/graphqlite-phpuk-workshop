@@ -41,8 +41,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: demo
-    volumes:
-      - mysql_data:/var/lib/mysql
+    tmpfs:
+      - /var/lib/mysql
+#    volumes:
+#      - mysql_data:/var/lib/mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:4.7
