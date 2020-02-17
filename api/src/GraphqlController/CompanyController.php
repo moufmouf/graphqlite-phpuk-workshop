@@ -21,6 +21,10 @@ class CompanyController
         $this->companyRepository = $companyRepository;
     }
 
+    /**
+     * @Query()
+     * @return Company[]
+     */
     public function getCompanies(?string $search)
     {
         return $this->companyRepository->search($search)->getResult();

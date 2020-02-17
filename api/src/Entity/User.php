@@ -11,6 +11,7 @@ use TheCodingMachine\GraphQLite\Annotations\Security;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 
 /**
+ * @Type()
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
 class User implements UserInterface, Serializable
@@ -56,11 +57,17 @@ class User implements UserInterface, Serializable
         $this->setPlainPassword($plainPassword, $passwordEncoder);
     }
 
+    /**
+     * @Field()
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @Field()
+     */
     public function getEmail(): ?string
     {
         return $this->email;
@@ -69,6 +76,7 @@ class User implements UserInterface, Serializable
     /**
      * A visual identifier that represents this user.
      *
+     * @Field()
      * @see UserInterface
      */
     public function getUsername(): string
@@ -85,6 +93,7 @@ class User implements UserInterface, Serializable
     }
 
     /**
+     * @Field()
      * @return string[]
      * @see UserInterface
      */
@@ -97,6 +106,9 @@ class User implements UserInterface, Serializable
         return array_unique($roles);
     }
 
+    /**
+     * @Field()
+     */
     public function getCompany(): ?Company
     {
         return $this->company;

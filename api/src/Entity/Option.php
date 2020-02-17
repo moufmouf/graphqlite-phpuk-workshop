@@ -7,6 +7,7 @@ use TheCodingMachine\GraphQLite\Annotations\Field;
 use TheCodingMachine\GraphQLite\Annotations\Type;
 
 /**
+ * @Type()
  * @ORM\Entity(repositoryClass="App\Repository\OptionRepository")
  * @ORM\Table(name="product_option")
  */
@@ -42,21 +43,33 @@ class Option
         $this->product = $product;
     }
 
+    /**
+     * @Field()
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @Field()
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * @Field()
+     */
     public function getPrice(): ?float
     {
         return $this->price;
     }
 
+    /**
+     * @Field()
+     */
     public function getProduct(): ?Product
     {
         return $this->product;
