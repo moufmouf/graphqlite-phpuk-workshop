@@ -1,9 +1,12 @@
 <script>
-    import queries from './companies.graphql'
+    import queries from './queries.graphql'
 
-    console.log('q', queries);
     let search = "";
 </script>
+
+<svelte:head>
+    <title>Companies list</title>
+</svelte:head>
 
 <h1>Companies list</h1>
 
@@ -14,22 +17,15 @@ Search filter: <input type="text" bind:value={search} />
 {#await queries.companies({search, offset: 0}) }
     <p>...waiting</p>
 {:then data}
-    <table>
     {#each data.data.data.companies.items as company, i}
-        <tr>
-            <td>{company.name}</td>
-            <td>
-                <ul>
-            {#each company.products as product, j}
-                <li>
-                {product.name} ({product.price} €)
-                </li>
-            {/each}
-                </ul>
-            </td>
-        </tr>
+        <div class="companyrow row">
+            <div class="col">
+                <a href="/company/{company.id}">{company.name}</a>
+                <br/>
+                <small>({company.website})</small>
+            </div>
+        </div>
     {/each}
-    </table>
     <!-- <p>The result is {JSON.stringify(data.data.data.companies)}</p> -->
 {:catch error}
     <p style="color: red">{error.message}</p>

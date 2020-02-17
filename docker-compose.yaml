@@ -57,10 +57,11 @@ services:
       PMA_PASSWORD: secret
 
   # The container that contains Javascript / SPA (SvelteJS)
-  front:
+  front-svelte:
     image: thecodingmachine/nodejs:12
     ports:
       - "83:3000"
+      - "10000:10000" # for Sapper live reload
     labels:
       - traefik.enable=true
       - traefik.http.routers.front_router.rule=Host(`www.localhost`)
@@ -69,7 +70,7 @@ services:
       STARTUP_COMMAND_1: "npm install"
       STARTUP_COMMAND_2: "npm run dev"
     volumes:
-      - ./front:/usr/src/app:delegated
+      - ./front-svelte:/usr/src/app:delegated
 
   # The container that contains Javascript / SPA (SvelteJS)
   front-react:

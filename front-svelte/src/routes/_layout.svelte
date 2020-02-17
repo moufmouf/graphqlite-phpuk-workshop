@@ -1,5 +1,6 @@
 <script>
 	import Nav from '../components/Nav.svelte';
+	//import 'bootstrap/dist/css/bootstrap.min.css';
 
 	export let segment;
 </script>
@@ -14,6 +15,10 @@
 		box-sizing: border-box;
 	}
 </style>
+
+<svelte:head>
+	<link rel='stylesheet' href='bootstrap/css/bootstrap.css' />
+</svelte:head>
 
 <Nav {segment}/>
 
