@@ -59,31 +59,49 @@ class Product
         $this->options = new ArrayCollection();
     }
 
+    /**
+     * @Field()
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @Field()
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * @Field()
+     */
     public function getPrice(): ?float
     {
         return $this->price;
     }
 
+    /**
+     * @Field()
+     */
     public function getMargin(): ?float
     {
         return $this->margin;
     }
 
+    /**
+     * @Field()
+     */
     public function getCompany(): ?Company
     {
         return $this->company;
     }
 
+    /**
+     * @Field()
+     */
     public function getOptions(): Collection
     {
         return $this->options;
