@@ -35,6 +35,8 @@ services:
       STARTUP_COMMAND_3: bin/console doctrine:fixtures:load --no-interaction || true
     volumes:
       - ./api:/var/www/html:delegated
+    depends_on:
+      - mysql
 
   mysql:
     image: thecodingmachine/mysql:5.7-v1
