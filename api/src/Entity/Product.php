@@ -58,20 +58,34 @@ class Product
         $this->options = new ArrayCollection();
     }
 
-    /**
-     * @Field()
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @Field()
-     */
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+
+    public function getMargin(): ?float
+    {
+        return $this->margin;
+    }
+
+    public function getCompany(): ?Company
+    {
+        return $this->company;
+    }
+
+    public function getOptions(): Collection
+    {
+        return $this->options;
     }
 
     public function setName(string $name): self
@@ -81,27 +95,11 @@ class Product
         return $this;
     }
 
-    /**
-     * @Field()
-     */
-    public function getPrice(): ?float
-    {
-        return $this->price;
-    }
-
     public function setPrice(?float $price): self
     {
         $this->price = $price;
 
         return $this;
-    }
-
-    /**
-     * @Field()
-     */
-    public function getMargin(): ?float
-    {
-        return $this->margin;
     }
 
     public function setMargin(?float $margin): self
@@ -111,28 +109,11 @@ class Product
         return $this;
     }
 
-    /**
-     * @Field()
-     */
-    public function getCompany(): ?Company
-    {
-        return $this->company;
-    }
-
     public function setCompany(?Company $company): self
     {
         $this->company = $company;
 
         return $this;
-    }
-
-    /**
-     * @Field()
-     * @return Collection|Option[]
-     */
-    public function getOptions(): Collection
-    {
-        return $this->options;
     }
 
     public function addOption(Option $option): self
@@ -158,20 +139,20 @@ class Product
         return $this;
     }
 
-    /**
-     * @Field()
-     * @Autowire(for="$vatService")
-     */
-    public function getVat(VatServiceInterface $vatService): float
-    {
-        return $vatService->getVat($this);
-    }
+//    /**
+//     * @Field()
+//     */
+//    public function getVat(): float
+//    {
+//        return $this->price * 0.2;
+//    }
 
-    /**
-     * @Field()
-     */
-    /*public function getVat(): float
-    {
-        return $this->price * 0.2;
-    }*/
+//    /**
+//     * @Field()
+//     * @Autowire(for="$vatService")
+//     */
+//    public function getVat(VatServiceInterface $vatService): float
+//    {
+//        return $vatService->getVat($this);
+//    }
 }
