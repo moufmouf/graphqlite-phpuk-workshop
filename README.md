@@ -860,10 +860,49 @@ Success!
 
 ## Step 5: Playing with the front-end part
 
-TODO
+This project contains 2 front-ends (to showcase the difference between Apollo + React + Typescript and Svelte + Sapper).
 
-https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/
+- `http://localhost:83` points to the Svelte frontend
+- `http://localhost:84` points to the React frontend 
 
+In this workshop, we will focus on the React frontend.
+
+We will not explain how it was built. Take a look at this great [blog post](https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/)
+if you want to setup your own React / Apollo / Typescript project.
+
+The interesting part here is that Typescript types are generated from the GraphQL queries and schema.
+This means that when we do a change in a PHP class, the change is propagated to the
+GraphQL schema and then to the Typescript types.
+
+In order to test this, let's make a change in the PHP code:
+
+```php
+class Product
+{
+    /**
+     * @Field()
+     */
+-   public function getName(): ?string
++   public function getLabel(): ?string
+    {
+        return $this->name;
+    }
+}
+```
+
+We change the `getName` method to a `getLabel` method in PHP.
+This will obviously break our front.
+
+Hopefully, since everything is strictly types, the compiler will detect this automatically and help us solve the issue!
+
+But first, we need to regenerate the types.
+
+```bash
+$ docker-compose exec front-react yarn run codegen
+```
+
+Exercise: looking at the compiler output, fix the bugs we introduced by
+the method name.
 
 ## Step 6: Mutations
 
