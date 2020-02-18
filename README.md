@@ -40,10 +40,10 @@ Check the `docker-compose.yaml` file for more details.
 
 You should have several containers started:
 
-- http://localhost:81 points to the PHP container
-- http://localhost:82 points to the PhpMyAdmin container
-- http://localhost:83 points to a Svelte frontend
-- http://localhost:84 points to a React frontend 
+- `http://localhost:81` points to the PHP container
+- `http://localhost:82` points to the PhpMyAdmin container
+- `http://localhost:83` points to a Svelte frontend
+- `http://localhost:84` points to a React frontend 
 
 ## The project so far
 
