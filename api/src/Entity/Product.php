@@ -101,6 +101,7 @@ class Product
 
     /**
      * @Field()
+     * @return Collection|Option[]
      */
     public function getOptions(): Collection
     {

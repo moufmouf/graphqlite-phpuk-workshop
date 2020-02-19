@@ -31,8 +31,9 @@ services:
 #      PHP_INI_XDEBUG__PROFILER_OUTPUT_NAME: cachegrind.out.%s.%u
       DATABASE_URL: mysql://root:secret@mysql:3306/demo?serverVersion=5.7
       STARTUP_COMMAND_1: composer install
-      STARTUP_COMMAND_2: bin/console doctrine:migration:migrate --no-interaction || true
-      STARTUP_COMMAND_3: bin/console doctrine:fixtures:load --no-interaction || true
+      STARTUP_COMMAND_2: sleep 10 # Wait for DB setup
+      STARTUP_COMMAND_3: bin/console doctrine:migration:migrate --no-interaction || true
+      STARTUP_COMMAND_4: bin/console doctrine:fixtures:load --no-interaction || true
     volumes:
       - ./api:/var/www/html:delegated
     depends_on:
