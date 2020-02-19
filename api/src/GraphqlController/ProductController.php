@@ -41,17 +41,22 @@ class ProductController
         $this->validator = $validator;
     }
 
-//    /**
-//     * @Mutation()
-//     */
-//    public function createProduct(string $name, float $price, int $companyId): Product
-//    {
-//        $product = new Product($name, $this->companyRepository->find($companyId));
-//        $product->setPrice($price);
-//        $this->em->persist($product);
-//        $this->em->flush();
-//        return $product;
-//    }
+    /**
+     * @Mutation()
+     * @param Option[] $options
+     */
+    public function createProduct(string $name, float $price, int $companyId, array $options): Product
+    {
+        $product = new Product($name, $this->companyRepository->find($companyId));
+        $product->setPrice($price);
+        foreach ($options as $option) {
+            $product->addOption($option);
+            $this->em->persist($option);
+        }
+        $this->em->persist($product);
+        $this->em->flush();
+        return $product;
+    }
 
 //    /**
 //     * @Mutation()
@@ -84,19 +89,19 @@ class ProductController
 //        return $product;
 //    }
 
-//    /**
-//     * @Query()
-//     */
-//    public function getProduct(int $productId): ?Product
-//    {
-//        return $this->productRepository->find($productId);
-//    }
+    /**
+     * @Query()
+     */
+    public function getProduct(int $productId): ?Product
+    {
+        return $this->productRepository->find($productId);
+    }
 
-//    /**
-//     * @Factory()
-//     */
-//    public function optionFactory(string $name, float $price): Option
-//    {
-//        return new Option($name, $price);
-//    }
+    /**
+     * @Factory()
+     */
+    public function optionFactory(string $name, float $price): Option
+    {
+        return new Option($name, $price);
+    }
 }
