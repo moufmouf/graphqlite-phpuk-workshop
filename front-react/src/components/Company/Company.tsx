@@ -23,7 +23,7 @@ const Company: React.FC<Props> = ({ data }) => (
                                     <img src={"https://i.picsum.photos/id/"+((product.id??0) % 100)+"/50/50.jpg"} alt="" />
                                 </div>
                                 <div className="col-9">
-                                    <strong>{product.name}</strong>
+                                    <strong>{product.label}</strong>
                                     <br/>
                                     { product.price }€
                                 </div>

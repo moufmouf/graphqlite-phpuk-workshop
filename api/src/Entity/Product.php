@@ -71,7 +71,7 @@ class Product
     /**
      * @Field()
      */
-    public function getName(): ?string
+    public function getLabel(): ?string
     {
         return $this->name;
     }

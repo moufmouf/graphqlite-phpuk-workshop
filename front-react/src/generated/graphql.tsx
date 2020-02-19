@@ -26,17 +26,8 @@ export type Company = {
 
 export type Mutation = {
    __typename?: 'Mutation',
-  createProduct: Product,
   login: SymfonyUserInterface,
   logout: Scalars['Boolean'],
-};
-
-
-export type MutationCreateProductArgs = {
-  name: Scalars['String'],
-  price: Scalars['Float'],
-  companyId: Scalars['Int'],
-  options?: Array<OptionInput>
 };
 
 
@@ -45,23 +36,12 @@ export type MutationLoginArgs = {
   password: Scalars['String']
 };
 
-export enum MyCLabsEnum___App__GraphqlController__TaskStatus {
-  StatusToDo = 'STATUS_TO_DO',
-  StatusDoing = 'STATUS_DOING',
-  StatusDone = 'STATUS_DONE'
-}
-
 export type Option = {
    __typename?: 'Option',
   id?: Maybe<Scalars['Int']>,
   name?: Maybe<Scalars['String']>,
   price?: Maybe<Scalars['Float']>,
   product?: Maybe<Product>,
-};
-
-export type OptionInput = {
-  name: Scalars['String'],
-  price: Scalars['Float'],
 };
 
 export type PorpaginasResult_Company = {
@@ -91,7 +71,7 @@ export type PorpaginasResult_UserItemsArgs = {
 export type Product = {
    __typename?: 'Product',
   id?: Maybe<Scalars['Int']>,
-  name?: Maybe<Scalars['String']>,
+  label?: Maybe<Scalars['String']>,
   price?: Maybe<Scalars['Float']>,
   margin?: Maybe<Scalars['Float']>,
   company?: Maybe<Company>,
@@ -104,8 +84,6 @@ export type Query = {
   companies: PorpaginasResult_Company,
   company?: Maybe<Company>,
   users: PorpaginasResult_User,
-  task: MyCLabsEnum___App__GraphqlController__TaskStatus,
-  product?: Maybe<Product>,
   me?: Maybe<SymfonyUserInterface>,
 };
 
@@ -122,11 +100,6 @@ export type QueryCompanyArgs = {
 
 export type QueryUsersArgs = {
   search?: Maybe<Scalars['String']>
-};
-
-
-export type QueryProductArgs = {
-  productId: Scalars['Int']
 };
 
 export type SymfonyUserImpl = SymfonyUserInterface & {
@@ -162,7 +135,7 @@ export type CompanyQuery = (
     & Pick<Company, 'id' | 'name'>
     & { products: Array<(
       { __typename?: 'Product' }
-      & Pick<Product, 'id' | 'name' | 'price'>
+      & Pick<Product, 'id' | 'label' | 'price'>
     )> }
   )> }
 );
@@ -192,7 +165,7 @@ export const CompanyDocument = gql`
     name
     products {
       id
-      name
+      label
       price
     }
   }

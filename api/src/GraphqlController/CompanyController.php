@@ -41,11 +41,11 @@ class CompanyController
         return new ORMQueryResult($this->companyRepository->search($search));
     }
 
-//    /**
-//     * @Query()
-//     */
-//    public function getCompany(int $id): ?Company
-//    {
-//        return $this->companyRepository->find($id);
-//    }
+    /**
+     * @Query()
+     */
+    public function getCompany(int $id): ?Company
+    {
+        return $this->companyRepository->find($id);
+    }
 }
