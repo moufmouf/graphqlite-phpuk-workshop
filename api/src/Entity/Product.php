@@ -83,6 +83,9 @@ class Product
         return $this->company;
     }
 
+    /**
+     * @return Collection|Option[]
+     */
     public function getOptions(): Collection
     {
         return $this->options;
