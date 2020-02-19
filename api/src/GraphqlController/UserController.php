@@ -24,6 +24,8 @@ class UserController
     }
 
     /**
+     * @Query()
+     * @Right("ROLE_ADMIN")
      * @return ORMQueryResult|User[]
      */
     public function users(?string $search)
