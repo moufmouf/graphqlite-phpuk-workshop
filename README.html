@@ -2,9 +2,10 @@
 <p>This project contains the code to be downloaded by PHP UK Conference participants at the GraphQLite workshop.</p>
 <h2 id="project-organization">Project organization</h2>
 <p>In order to install the project, start by cloning it.</p>
-<p>This repository contains 2 branches:</p>
+<p>This repository contains several branches:</p>
 <ul>
 <li><code>step0</code> is where you start</li>
+<li><code>step2</code> to <code>step8</code> contain the workshop work at various stages</li>
 <li><code>master</code> is the final result at the end of the workshop</li>
 </ul>
 <p>Start with branch &quot;step0&quot;:</p>
@@ -200,7 +201,7 @@ class Company
 <p><em>Note:</em> the example above declares an &quot;operation name&quot; for the query (<code>companiesContainingA</code>)</p>
 <p>In GraphiQL IDE, you can have many operations in the same page. When you press the play button, you can select the<br>operation that will be executed.</p>
 <h2 id="step-2-enabling-pagination">Step 2: Enabling pagination</h2>
-<p>Note: if you did not complete the exercise in step 1, you can jump to the solution by changing your current branch:</p>
+<p>Note: if you did not complete the exercise in step 0, you can jump to the solution by changing your current branch:</p>
 <pre><code class="lang-bash">$ git checkout step2
 </code></pre>
 <p>In this second step, we are going to add pagination on our list of companies.</p>
@@ -273,6 +274,9 @@ class Company
 <li><code>count</code>: use this field to get the <strong>total</strong> count of companies</li>
 </ul>
 <h2 id="step-3-security">Step 3: Security</h2>
+<p>Note: if you did not complete the exercise in step 2, you can jump to the solution by changing your current branch:</p>
+<pre><code class="lang-bash">$ git checkout step3
+</code></pre>
 <p>GraphQLite can integrate with any framework security module.</p>
 <p>Our Symfony&#39;s project security was already set up using the <code>bin/console make:user</code> command.</p>
 <p>Navigate to GraphiQL: <code>http://api.localhost/graphiql</code>.</p>
@@ -496,6 +500,9 @@ class User implements UserInterface, Serializable
 </ul>
 <p>Note how rights management annotations are coded right into your domain objects.<br>In my opinion, it makes security audits much easier as I can view the restrictions applied to a field just next to the<br>field declaration.</p>
 <h2 id="step-4-autowiring">Step 4: autowiring</h2>
+<p>Note: if you did not complete the exercise in step &quot;, you can jump to the solution by changing your current branch:</p>
+<pre><code class="lang-bash">$ git checkout step4
+</code></pre>
 <p>GraphQLite makes it trivial to compute a &quot;dynamic&quot; field.<br>Indeed, fields are only getters, and you can write any logic in a getter.</p>
 <p>In our application, let&#39;s add a field to the &quot;Product&quot; type that computes the VAT of a product:</p>
 <pre><code class="lang-php">class Product
@@ -593,9 +600,40 @@ class VatService implements VatServiceInterface
 <p>Symfony&#39;s autowiring should detect that <code>VatService</code> is the only available implementation of <code>VatServiceInterface</code><br>so when GraphQLite will ask for the service implementing <code>VatServiceInterface</code>, Symfony will automatically serve<br>the <code>VatService</code> instance.</p>
 <p>Success!</p>
 <h2 id="step-5-playing-with-the-front-end-part">Step 5: Playing with the front-end part</h2>
-<p>TODO</p>
-<p><a href="https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/">https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/</a></p>
+<p>Note: if you did not complete the exercise in step 4, you can jump to the solution by changing your current branch:</p>
+<pre><code class="lang-bash">$ git checkout step5
+</code></pre>
+<p>This project contains 2 front-ends (to showcase the difference between Apollo + React + Typescript and Svelte + Sapper).</p>
+<ul>
+<li><code>http://localhost:83</code> points to the Svelte frontend</li>
+<li><code>http://localhost:84</code> points to the React frontend </li>
+</ul>
+<p>In this workshop, we will focus on the React frontend.</p>
+<p>We will not explain how it was built. Take a look at this great <a href="https://blog.logrocket.com/build-a-graphql-react-app-with-typescript/">blog post</a><br>if you want to setup your own React / Apollo / Typescript project.</p>
+<p>The interesting part here is that Typescript types are generated from the GraphQL queries and schema.<br>This means that when we do a change in a PHP class, the change is propagated to the<br>GraphQL schema and then to the Typescript types.</p>
+<p>In order to test this, let&#39;s make a change in the PHP code:</p>
+<pre><code class="lang-php">class Product
+{
+    /**
+     * @Field()
+     */
+-   public function getName(): ?string
++   public function getLabel(): ?string
+    {
+        return $this-&gt;name;
+    }
+}
+</code></pre>
+<p>We change the <code>getName</code> method to a <code>getLabel</code> method in PHP.<br>This will obviously break our front.</p>
+<p>Hopefully, since everything is strictly types, the compiler will detect this automatically and help us solve the issue!</p>
+<p>But first, we need to regenerate the types.</p>
+<pre><code class="lang-bash">$ docker-compose exec front-react yarn run codegen
+</code></pre>
+<p>Exercise: looking at the compiler output, fix the bugs we introduced by<br>the method name.</p>
 <h2 id="step-6-mutations">Step 6: Mutations</h2>
+<p>Note: if you did not complete the exercise in step 5, you can jump to the solution by changing your current branch:</p>
+<pre><code class="lang-bash">$ git checkout step6
+</code></pre>
 <p>So far, we used &quot;Queries&quot; to fetch data from the database. Let&#39;s now try to create new records and insert them.</p>
 <p>To do this, we need to use &quot;mutations&quot;.</p>
 <p>Mutations are GraphQL operations that can change the state of the application.<br>The difference between queries and mutations is mostly a semantic one. Nothing prevents you from altering your database<br>on a &quot;query&quot;, but you should definitely not do it (just like you would not save a record on a GET HTTP request in a REST<br>API).</p>
@@ -734,6 +772,9 @@ class VatService implements VatServiceInterface
 }
 </code></pre>
 <h2 id="step-7-validation">Step 7: Validation</h2>
+<p>Note: if you did not complete the exercise in step 6, you can jump to the solution by changing your current branch:</p>
+<pre><code class="lang-bash">$ git checkout step7
+</code></pre>
 <p>Congratulations! Now, you know how to query and update your database using GraphQL.</p>
 <p>The GraphQL type system validates automatically the structure of the data passed by our client.<br>However, the client could still pass garbage data. For instance, he could pass an empty name, or a negative product price:</p>
 <pre><code class="lang-graphql">mutation createProduct {
