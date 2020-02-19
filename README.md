@@ -6,9 +6,10 @@ This project contains the code to be downloaded by PHP UK Conference participant
 
 In order to install the project, start by cloning it.
 
-This repository contains 2 branches:
+This repository contains several branches:
 
 - `step0` is where you start
+- `step2` to `step8` contain the workshop work at various stages
 - `master` is the final result at the end of the workshop
 
 Start with branch "step0":
@@ -280,7 +281,7 @@ operation that will be executed.
 
 ## Step 2: Enabling pagination
 
-Note: if you did not complete the exercise in step 1, you can jump to the solution by changing your current branch:
+Note: if you did not complete the exercise in step 0, you can jump to the solution by changing your current branch:
 
 ```bash
 $ git checkout step2
@@ -389,6 +390,12 @@ The `companies` query does not return the list of companies directly anymore. In
 
 
 ## Step 3: Security
+
+Note: if you did not complete the exercise in step 2, you can jump to the solution by changing your current branch:
+
+```bash
+$ git checkout step3
+```
 
 GraphQLite can integrate with any framework security module.
 
@@ -724,6 +731,12 @@ field declaration.
 
 ## Step 4: autowiring
 
+Note: if you did not complete the exercise in step ", you can jump to the solution by changing your current branch:
+
+```bash
+$ git checkout step4
+```
+
 GraphQLite makes it trivial to compute a "dynamic" field.
 Indeed, fields are only getters, and you can write any logic in a getter.
 
@@ -860,6 +873,12 @@ Success!
 
 ## Step 5: Playing with the front-end part
 
+Note: if you did not complete the exercise in step 4, you can jump to the solution by changing your current branch:
+
+```bash
+$ git checkout step5
+```
+
 This project contains 2 front-ends (to showcase the difference between Apollo + React + Typescript and Svelte + Sapper).
 
 - `http://localhost:83` points to the Svelte frontend
@@ -905,6 +924,12 @@ Exercise: looking at the compiler output, fix the bugs we introduced by
 the method name.
 
 ## Step 6: Mutations
+
+Note: if you did not complete the exercise in step 5, you can jump to the solution by changing your current branch:
+
+```bash
+$ git checkout step6
+```
 
 So far, we used "Queries" to fetch data from the database. Let's now try to create new records and insert them.
 
@@ -1091,6 +1116,12 @@ query product {
 ```
 
 ## Step 7: Validation
+
+Note: if you did not complete the exercise in step 6, you can jump to the solution by changing your current branch:
+
+```bash
+$ git checkout step7
+```
 
 Congratulations! Now, you know how to query and update your database using GraphQL.
 
