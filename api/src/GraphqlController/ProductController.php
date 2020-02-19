@@ -54,6 +54,13 @@ class ProductController
             $this->em->persist($option);
         }
         $this->em->persist($product);
+
+        // Let's validate the product
+        $errors = $this->validator->validate($product);
+        // Throw an appropriate GraphQL exception if validation errors are encountered
+        ValidationFailedException::throwException($errors);
+
+
         $this->em->flush();
         return $product;
     }
