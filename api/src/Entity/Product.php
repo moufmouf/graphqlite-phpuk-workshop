@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Services\VatService;
 use App\Services\VatServiceInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -167,12 +168,12 @@ class Product
 //        return $this->price * 0.2;
 //    }
 
-//    /**
-//     * @Field()
-//     * @Autowire(for="$vatService")
-//     */
-//    public function getVat(VatServiceInterface $vatService): float
-//    {
-//        return $vatService->getVat($this);
-//    }
+    /**
+     * @Field()
+     * @Autowire(for="$vatService")
+     */
+    public function getVat(VatServiceInterface $vatService): float
+    {
+        return $vatService->getVat($this);
+    }
 }
