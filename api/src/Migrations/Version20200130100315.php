@@ -24,7 +24,7 @@ final class Version20200130100315 extends AbstractMigration
 
         $this->addSql('CREATE TABLE product_option (id INT AUTO_INCREMENT NOT NULL, product_id INT NOT NULL, name VARCHAR(255) NOT NULL, price DOUBLE PRECISION DEFAULT NULL, INDEX IDX_38FA41144584665A (product_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE product_option ADD CONSTRAINT FK_38FA41144584665A FOREIGN KEY (product_id) REFERENCES product (id)');
-        $this->addSql('DROP TABLE `option`');
+        $this->addSql('DROP TABLE IF EXISTS `option`');
     }
 
     public function down(Schema $schema) : void
