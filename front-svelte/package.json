@@ -15,7 +15,7 @@
     "bootstrap": "^4.4.1",
     "compression": "^1.7.1",
     "gq-loader": "git+https://github.com/Houfeng/gq-loader.git#master",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "polka": "next",
     "sirv": "^0.4.0"
   },
