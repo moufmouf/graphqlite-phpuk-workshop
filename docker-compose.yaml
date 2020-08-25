@@ -77,7 +77,7 @@ services:
     volumes:
       - ./front-svelte:/usr/src/app:delegated
 
-  # The container that contains Javascript / SPA (SvelteJS)
+  # The container that contains Javascript / SPA (React)
   front-react:
     image: thecodingmachine/nodejs:12
     ports:
@@ -91,6 +91,21 @@ services:
       STARTUP_COMMAND_2: "yarn run start"
     volumes:
       - ./front-react:/usr/src/app:delegated
+
+  # The container that contains Javascript / SPA (Vue 2)
+  front-vue:
+    image: thecodingmachine/nodejs:12
+    ports:
+      - "85:8080"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.react_router.rule=Host(`vue.localhost`)
+      - traefik.http.services.react_service.loadbalancer.server.port=8080
+    environment:
+      STARTUP_COMMAND_1: "yarn install"
+      STARTUP_COMMAND_2: "yarn run serve"
+    volumes:
+      - ./front-vue:/usr/src/app:delegated
 
 volumes:
 
