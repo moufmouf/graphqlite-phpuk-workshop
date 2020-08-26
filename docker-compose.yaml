@@ -66,7 +66,7 @@ services:
     image: thecodingmachine/nodejs:12
     ports:
       - "83:3000"
-      - "10000:10000" # for Sapper live reload
+      #- "10000:10000" # for Sapper live reload
     labels:
       - traefik.enable=true
       - traefik.http.routers.front_router.rule=Host(`www.localhost`)
@@ -76,6 +76,22 @@ services:
       STARTUP_COMMAND_2: "npm run dev"
     volumes:
       - ./front-svelte:/usr/src/app:delegated
+
+  # The container that contains Javascript / SPA (SvelteJS with Typescript support)
+  front-svelte-ts:
+    image: thecodingmachine/nodejs:12
+    ports:
+      - "86:5000"
+      - "10000:10000" # for Sapper live reload
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.front_router.rule=Host(`sveltets.localhost`)
+      - traefik.http.services.front_service.loadbalancer.server.port=5000
+    environment:
+      STARTUP_COMMAND_1: "npm install"
+      STARTUP_COMMAND_2: "npm run dev"
+    volumes:
+      - ./front-svelte-ts:/usr/src/app:delegated
 
   # The container that contains Javascript / SPA (SvelteJS)
   front-react:
