@@ -1,0 +1,15 @@
+overwrite: true
+schema: "http://api/graphql"
+documents: "src/**/*.graphql"
+generates:
+  src/generated/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      #- "typescript-graphql-files-modules"
+      #- "typescript-document-nodes"
+      #- "fragment-matcher"
+      - "typescript-vue-apollo"
+  ./graphql.schema.json:
+    plugins:
+      - "introspection"

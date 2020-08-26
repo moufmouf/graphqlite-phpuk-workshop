@@ -2,6 +2,8 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <TestButton />
+    <input type="text" v-model="search">
+    <CompanyList :search="search" />
     <p>
       For a guide and recipes on how to configure / customize this project,<br>
       check out the
@@ -36,14 +38,21 @@
 <script lang="ts">
 import Vue from 'vue';
 import TestButton from "@/components/TestButton.vue";
+import CompanyList from "@/components/CompanyList/CompanyList.vue";
 
 export default Vue.extend({
   name: 'HelloWorld',
   props: {
     msg: String,
   },
+  data: () => {
+    return {
+      search: "a"
+    }
+  },
   components: {
-    TestButton
+    TestButton,
+    CompanyList
   }
 });
 </script>
