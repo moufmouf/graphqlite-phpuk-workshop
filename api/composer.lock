@@ -8034,16 +8034,16 @@
         },
         {
             "name": "thecodingmachine/graphqlite-bundle",
-            "version": "v4.1.1",
+            "version": "v4.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thecodingmachine/graphqlite-bundle.git",
-                "reference": "c4951c3c992cd3ba6bd1f8525eba1ac89ec43e73"
+                "reference": "a14b9a0313e0bd788d33a08ca98fb2bc845fb371"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thecodingmachine/graphqlite-bundle/zipball/c4951c3c992cd3ba6bd1f8525eba1ac89ec43e73",
-                "reference": "c4951c3c992cd3ba6bd1f8525eba1ac89ec43e73",
+                "url": "https://api.github.com/repos/thecodingmachine/graphqlite-bundle/zipball/a14b9a0313e0bd788d33a08ca98fb2bc845fb371",
+                "reference": "a14b9a0313e0bd788d33a08ca98fb2bc845fb371",
                 "shasum": ""
             },
             "require": {
@@ -8102,7 +8102,7 @@
                 "graphql",
                 "symfony"
             ],
-            "time": "2020-12-08T08:49:43+00:00"
+            "time": "2020-12-08T11:18:21+00:00"
         },
         {
             "name": "thecodingmachine/graphqlite-symfony-validator-bridge",
